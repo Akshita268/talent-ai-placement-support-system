@@ -299,9 +299,3 @@ The project was developed to address common challenges faced by students during 
 **Akshita**
 
 Computer Science Engineering Student
-
----
-
-## License
-
-This project is intended for educational, learning, and demonstration purposes.
