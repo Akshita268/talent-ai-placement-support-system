@@ -1,0 +1,74 @@
+{% extends "dashboard_student.html" %}
+
+{% block body %}
+<div class="row justify-content-center">
+    <div class="col-lg-11">
+        <!-- Header Card -->
+        <div class="card border-0 shadow-sm p-4 bg-glass mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                    <div>
+                        <h6 class="text-secondary text-uppercase small tracking-wider mb-1">
+                            <a href="/coding-prep" class="text-secondary text-decoration-none">
+                                <i class="bi bi-arrow-left me-1"></i> Coding Preparation
+                            </a>
+                        </h6>
+                        <h1 class="h2 fw-extrabold text-light mb-1">{{ category.title }}</h1>
+                        <p class="text-secondary mb-0">Select a subcategory below to explore the Top 15 Frequently Asked Interview Questions.</p>
+                    </div>
+                    <a href="/coding-prep" class="btn btn-outline-secondary text-light border-secondary">
+                        <i class="bi bi-grid-fill me-1"></i> All Categories
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Topics Grid -->
+        <div class="row g-3 mb-5">
+            {% for topic in category.topics %}
+                {% set completed_count = completed_map.get(topic, 0) %}
+                {% set pct = (completed_count / 15 * 100) | int %}
+                <div class="col-sm-6 col-md-4 col-lg-3 col-12">
+                    <a href="/coding-prep/subcategory/{{ category_name }}/{{ topic }}" class="text-decoration-none card h-100 border-0 bg-glass hover-border p-3">
+                        <div class="card-body d-flex flex-column justify-content-between">
+                            <div>
+                                <div class="d-flex align-items-center justify-content-between mb-2">
+                                    <span class="badge bg-indigo-subtle text-indigo rounded-pill px-2 py-0.5" style="font-size: 0.7rem;">Subcategory</span>
+                                    {% if completed_count == 15 %}
+                                        <span class="badge bg-success-subtle text-success-emphasis rounded-pill px-2 py-0.5" style="font-size: 0.7rem;"><i class="bi bi-check-circle-fill"></i> Done</span>
+                                    {% elif completed_count > 0 %}
+                                        <span class="badge bg-warning-subtle text-warning-emphasis rounded-pill px-2 py-0.5" style="font-size: 0.7rem;">In Progress</span>
+                                    {% else %}
+                                        <span class="badge bg-indigo-subtle text-indigo rounded-pill px-2 py-0.5" style="font-size: 0.7rem;">Not Started</span>
+                                    {% endif %}
+                                </div>
+                                <h4 class="h6 fw-bold text-light mb-2" style="font-family: 'Poppins', sans-serif;">{{ topic }}</h4>
+                            </div>
+                            
+                            <div class="mt-4 border-top pt-2 border-secondary border-opacity-10">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <span class="text-secondary small fw-medium" style="font-size: 0.75rem;">{{ completed_count }} / 15 Completed</span>
+                                    <span class="text-muted small" style="font-size: 0.75rem;">{{ pct }}%</span>
+                                </div>
+                                <div class="progress bg-dark border border-secondary border-opacity-10 rounded-pill" style="height: 4px;">
+                                    <div class="progress-bar bg-success" role="progressbar" style="width: {{ pct }}%;" aria-valuenow="{{ pct }}" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<style>
+.hover-border {
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.hover-border:hover {
+    border-color: var(--golden-batter) !important;
+    transform: translateY(-2px);
+}
+</style>
+{% endblock %}

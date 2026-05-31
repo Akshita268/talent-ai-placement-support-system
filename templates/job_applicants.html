@@ -1,0 +1,107 @@
+{% extends "dashboard_recruiter.html" %}
+
+{% block body %}
+<div class="row justify-content-center">
+    <div class="col-lg-12">
+        <div class="card border-0 shadow-sm p-4 bg-glass mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                    <div>
+                        <h1 class="h3 fw-bold text-light mb-1">Applicants for {{ job.job_role }}</h1>
+                        <p class="text-secondary mb-0">Total Applicants: {{ applicants|length }} | Candidates ranked by Final Placement Score</p>
+                    </div>
+                    <a href="/recruiter/jobs" class="btn btn-outline-secondary text-light border-secondary px-3 py-2 rounded-3">
+                        <i class="bi bi-arrow-left"></i> Back To Jobs
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        {% if applicants %}
+        <div class="table-responsive">
+            <table class="table-custom">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Student Name & Email</th>
+                        <th>ATS Score</th>
+                        <th class="text-indigo">Final Match Score</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for application in applicants %}
+                    <tr>
+                        <td class="text-center fw-bold">
+                            <span class="badge bg-indigo text-light rounded-circle p-2 d-inline-flex justify-content-center align-items-center" style="width: 28px; height: 28px;">
+                                {{ loop.index }}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="fw-bold text-light">{{ application.student_name }}</div>
+                            <div class="text-muted small">{{ application.student_email }}</div>
+                        </td>
+                        <td>
+                            <div class="fw-bold">{{ application.ats_score }}%</div>
+                        </td>
+                        <td class="text-indigo fw-extrabold fs-6">
+                            {{ application.final_score }}%
+                        </td>
+                        <td>
+                            <form action="/recruiter/application/{{ application.id }}/update-status" method="POST" class="d-flex align-items-center gap-2">
+                                <select name="status" class="form-select form-select-sm bg-dark text-light border-secondary small py-1 px-2" style="font-size: 0.8rem; width: auto; min-width: 120px;">
+                                    <option value="Applied" {% if application.status == 'Applied' %}selected{% endif %}>Applied</option>
+                                    <option value="Shortlisted" {% if application.status == 'Shortlisted' %}selected{% endif %}>Shortlisted</option>
+                                    <option value="Interview Scheduled" {% if application.status == 'Interview Scheduled' %}selected{% endif %}>Interview Scheduled</option>
+                                    <option value="Selected" {% if application.status == 'Selected' %}selected{% endif %}>Selected</option>
+                                    <option value="Rejected" {% if application.status == 'Rejected' %}selected{% endif %}>Rejected</option>
+                                </select>
+                                <button type="submit" class="btn btn-sm btn-outline-primary py-1 px-2" style="font-size: 0.75rem;">Update</button>
+                            </form>
+                        </td>
+                        <td>
+                            <div class="d-flex gap-2 flex-wrap align-items-center">
+                                <a href="/recruiter/application/{{ application.id }}/details" class="btn btn-sm btn-teal text-light" title="View Full Profile & Notes">
+                                    <i class="bi bi-journal-text"></i> Profile & Notes
+                                </a>
+                                {% if application.resume_filename %}
+                                <a href="/uploads/resumes/{{ application.resume_filename }}" class="btn btn-sm btn-outline-info text-light border-info" target="_blank" title="View Resume">
+                                    <i class="bi bi-eye"></i> View
+                                </a>
+                                <a href="/uploads/resumes/{{ application.resume_filename }}?download=true" class="btn btn-sm btn-outline-success text-light border-success" title="Download Resume">
+                                    <i class="bi bi-download"></i> Download
+                                </a>
+                                {% else %}
+                                <span class="text-muted small">No resume</span>
+                                {% endif %}
+                                
+                                {% if application.status in ['Shortlisted', 'Selected'] %}
+                                    {% if application.contact_details %}
+                                    <a href="/recruiter/applicant/{{ application.id }}" class="btn btn-sm btn-outline-warning text-light border-warning" title="View Candidate Details">
+                                        <i class="bi bi-person-lines-fill"></i> Details
+                                    </a>
+                                    {% else %}
+                                    <span class="badge bg-secondary-subtle text-secondary-emphasis rounded px-2 py-1.5 d-inline-flex align-items-center" style="font-size: 0.75rem;" title="Awaiting candidate details submission">Pending Details</span>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% else %}
+        <div class="card border-0 p-5 text-center bg-glass">
+            <div class="card-body">
+                <i class="bi bi-people-fill text-muted display-4 mb-3"></i>
+                <h4 class="text-light">No applicants yet</h4>
+                <p class="text-secondary small mb-0">Share this job listing with students to receive applications.</p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

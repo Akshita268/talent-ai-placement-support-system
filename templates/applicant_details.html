@@ -1,0 +1,173 @@
+{% extends "dashboard_recruiter.html" %}
+
+{% block block_title %}Applicant Details | TalentAI{% endblock %}
+
+{% block body %}
+<div class="row justify-content-center">
+    <div class="col-lg-11">
+        <!-- Header Card -->
+        <div class="card border-0 shadow-sm p-4 bg-glass mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                    <div>
+                        <h6 class="text-secondary text-uppercase small tracking-wider mb-1"><i class="bi bi-person-badge text-accent me-1"></i> Applicant Profile</h6>
+                        <h1 class="h3 fw-bold text-light mb-1">{{ application.student_name }}</h1>
+                        <p class="text-secondary mb-0">Applying for <strong>{{ job.job_role }}</strong> | Status: 
+                            <span class="badge bg-indigo-subtle text-indigo rounded-pill px-2.5 py-1 small">{{ application.status }}</span>
+                        </p>
+                    </div>
+                    <a href="/recruiter/job/{{ job.id }}/applicants" class="btn btn-outline-secondary text-light border-secondary px-3 py-2 rounded-3">
+                        <i class="bi bi-arrow-left"></i> Back to Applicants
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <!-- Left Side: Scores and Contact Details -->
+            <div class="col-lg-6">
+                <!-- Evaluation Metrics -->
+                <div class="card border-0 shadow-sm p-4 bg-glass mb-4">
+                    <div class="card-body">
+                        <h5 class="text-light mb-4"><i class="bi bi-shield-check text-indigo me-2"></i> Recruiter Recruitment Scores</h5>
+                        
+                        <!-- Score 1: ATS -->
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <span class="text-secondary small fw-medium">ATS Score</span>
+                                <span class="text-light fw-bold small">{{ application.ats_score }}%</span>
+                            </div>
+                            <div class="progress bg-dark border border-secondary border-opacity-10 rounded-pill" style="height: 8px;">
+                                <div class="progress-bar bg-info" role="progressbar" style="width: {{ application.ats_score }}%;" aria-valuenow="{{ application.ats_score }}" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </div>
+
+                        <!-- Score 2: Resume Embedding Match -->
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <span class="text-secondary small fw-medium">Resume Match (Embedding Similarity)</span>
+                                <span class="text-light fw-bold small">{{ application.resume_match }}%</span>
+                            </div>
+                            <div class="progress bg-dark border border-secondary border-opacity-10 rounded-pill" style="height: 8px;">
+                                <div class="progress-bar bg-warning" role="progressbar" style="width: {{ application.resume_match }}%;" aria-valuenow="{{ application.resume_match }}" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </div>
+
+                        <!-- Score 3: Skill Match -->
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <span class="text-secondary small fw-medium">Skill Keyword Match</span>
+                                <span class="text-light fw-bold small">{{ application.skill_match }}%</span>
+                            </div>
+                            <div class="progress bg-dark border border-secondary border-opacity-10 rounded-pill" style="height: 8px;">
+                                <div class="progress-bar bg-success" role="progressbar" style="width: {{ application.skill_match }}%;" aria-valuenow="{{ application.skill_match }}" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </div>
+
+                        <!-- Score 4: Project Strength -->
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <span class="text-secondary small fw-medium">Project Strength</span>
+                                <span class="text-light fw-bold small">{{ application.project_strength }}%</span>
+                            </div>
+                            <div class="progress bg-dark border border-secondary border-opacity-10 rounded-pill" style="height: 8px;">
+                                <div class="progress-bar bg-teal" role="progressbar" style="width: {{ application.project_strength }}%;" aria-valuenow="{{ application.project_strength }}" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </div>
+
+                        <!-- Score 5: Application Completeness -->
+                        <div class="mb-4">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <span class="text-secondary small fw-medium">Application Completeness</span>
+                                <span class="text-light fw-bold small">{{ application.completeness }}%</span>
+                            </div>
+                            <div class="progress bg-dark border border-secondary border-opacity-10 rounded-pill" style="height: 8px;">
+                                <div class="progress-bar bg-light" role="progressbar" style="width: {{ application.completeness }}%;" aria-valuenow="{{ application.completeness }}" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </div>
+
+                        <!-- Combined Score Banner -->
+                        <div class="p-3 rounded-3 bg-dark border border-secondary border-opacity-10 d-flex justify-content-between align-items-center">
+                            <div>
+                                <span class="text-indigo fw-bold d-block" style="color: var(--golden-batter) !important;">Recruiter Ranking Score</span>
+                                <span class="text-secondary small">Formula: 30% ATS + 20% Resume + 20% Skill + 20% Project + 10% Completeness</span>
+                            </div>
+                            <span class="badge bg-indigo text-light rounded-pill px-3 py-2 fs-5">{{ application.final_score }}%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact Details -->
+                <div class="card border-0 shadow-sm p-4 bg-glass">
+                    <div class="card-body">
+                        <h5 class="text-light mb-4"><i class="bi bi-person-lines-fill text-warning me-2"></i> Candidate Contact Submissions</h5>
+                        {% if application.contact_details %}
+                            <div class="d-flex flex-column gap-3">
+                                <div class="row g-2">
+                                    <div class="col-sm-6">
+                                        <span class="text-secondary small d-block">Phone Number</span>
+                                        <span class="text-light fw-medium">{{ application.contact_details.phone }}</span>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <span class="text-secondary small d-block">Current Location</span>
+                                        <span class="text-light fw-medium">{{ application.contact_details.location }}</span>
+                                    </div>
+                                </div>
+                                <div class="row g-2">
+                                    <div class="col-sm-6">
+                                        <span class="text-secondary small d-block">LinkedIn URL</span>
+                                        <a href="{{ application.contact_details.linkedin }}" target="_blank" class="text-indigo text-decoration-none small fw-medium">
+                                            {{ application.contact_details.linkedin }} <i class="bi bi-box-arrow-up-right small ms-0.5"></i>
+                                        </a>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <span class="text-secondary small d-block">Preferred Contact Time</span>
+                                        <span class="text-light fw-medium">{{ application.contact_details.contact_time }}</span>
+                                    </div>
+                                </div>
+                                <div class="border-top pt-3 border-secondary border-opacity-10">
+                                    <span class="text-secondary small d-block">Candidate Notes</span>
+                                    <p class="text-secondary small mb-0" style="white-space: pre-wrap;">{{ application.contact_details.notes or "No additional notes provided." }}</p>
+                                </div>
+                                <div class="text-muted small text-end" style="font-size: 0.7rem;">
+                                    Submitted at: {{ application.contact_details.submitted_at.strftime('%Y-%m-%d %H:%M') }}
+                                </div>
+                            </div>
+                        {% else %}
+                            <div class="p-3 bg-dark border border-secondary border-opacity-10 rounded-3 text-center py-4">
+                                <i class="bi bi-clock-history text-muted fs-3 mb-2 d-block"></i>
+                                <span class="text-muted small d-block">Awaiting Candidate Submission</span>
+                                <span class="text-secondary small">Contact details can be submitted by the student once their status is changed to Shortlisted or Selected.</span>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side: Recruiter Notes -->
+            <div class="col-lg-6">
+                <div class="card border-0 shadow-sm p-4 bg-glass h-100">
+                    <div class="card-body d-flex flex-column h-100">
+                        <h5 class="text-light mb-3"><i class="bi bi-journal-text text-success me-2"></i> Recruiter Evaluations & Notes</h5>
+                        <p class="text-secondary small mb-4">Add customized recruiter observations for this applicant. This feedback will be persisted in the candidate's profile records.</p>
+                        
+                        <form method="POST" class="d-flex flex-column flex-grow-1">
+                            <div class="mb-4 flex-grow-1">
+                                <label class="form-label text-muted small fw-medium">Candidate Evaluation Notes</label>
+                                <textarea name="recruiter_notes" class="form-control text-light bg-dark border-secondary p-3" rows="12" placeholder="e.g. Strong Python competencies, Weak DBMS normalization logic, Good behavior communication..." style="min-height: 250px;">{{ application.recruiter_notes or '' }}</textarea>
+                                <div class="form-text text-secondary mt-1" style="font-size: 0.75rem;">
+                                    Tip: Note down strong programming skills (e.g., "Strong Python"), weak conceptual domains (e.g., "Weak DBMS"), or behavioral communication highlights.
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-teal w-100 py-2.5 rounded-3 mt-auto">
+                                Save Notes <i class="bi bi-bookmark-check-fill ms-1"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

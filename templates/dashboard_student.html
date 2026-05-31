@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block layout %}
+    <div class="app-wrapper">
+        <!-- Sidebar Navigation -->
+        <div class="sidebar">
+            <a href="/student/dashboard" class="brand">
+                <i class="bi bi-cpu-fill fs-4"></i> TalentAI Student
+            </a>
+            <ul class="nav-menu">
+                <li>
+                    <a href="/student/dashboard" class="nav-link-custom {% if request.path == '/student/dashboard' %}active{% endif %}">
+                        <i class="bi bi-speedometer2"></i> Dashboard
+                    </a>
+                </li>
+                <li>
+                    <a href="/jobs" class="nav-link-custom {% if request.path == '/jobs' %}active{% endif %}">
+                        <i class="bi bi-briefcase"></i> Browse Jobs
+                    </a>
+                </li>
+                <li>
+                    <a href="/student/dashboard#recommended-jobs" class="nav-link-custom">
+                        <i class="bi bi-compass"></i> Recommended Jobs
+                    </a>
+                </li>
+                <li>
+                    <a href="/my_applications" class="nav-link-custom {% if request.path == '/my_applications' %}active{% endif %}">
+                        <i class="bi bi-check-circle"></i> My Applications
+                    </a>
+                </li>
+                <li>
+                    <a href="/student/resume-compare" class="nav-link-custom {% if request.path == '/student/resume-compare' %}active{% endif %}">
+                        <i class="bi bi-file-earmark-diff"></i> Resume Analysis
+                    </a>
+                </li>
+                <li>
+                    <a href="/interview" class="nav-link-custom {% if request.path == '/interview' %}active{% endif %}">
+                        <i class="bi bi-chat-left-text"></i> HR Interview Prep
+                    </a>
+                </li>
+                <li>
+                    <a href="/technical_interview" class="nav-link-custom {% if request.path == '/technical_interview' %}active{% endif %}">
+                        <i class="bi bi-terminal"></i> Technical Interview Prep
+                    </a>
+                </li>
+                <li>
+                    <a href="/coding-prep" class="nav-link-custom {% if request.path.startswith('/coding-prep') %}active{% endif %}">
+                        <i class="bi bi-code-slash"></i> Coding Preparation
+                    </a>
+                </li>
+                <li>
+                    <a href="/student/profile" class="nav-link-custom {% if request.path == '/student/profile' %}active{% endif %}">
+                        <i class="bi bi-person-fill"></i> Profile
+                    </a>
+                </li>
+
+                <li class="mt-auto">
+                    <a href="/student/logout" class="nav-link-custom text-danger">
+                        <i class="bi bi-box-arrow-left"></i> Logout
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="main-content">
+            <div class="fade-in">
+                {% block body %}
+                {% endblock %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

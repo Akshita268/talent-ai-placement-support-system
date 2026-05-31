@@ -1,0 +1,66 @@
+{% extends "dashboard_student.html" %}
+
+{% block body %}
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <!-- Header Card -->
+        <div class="card border-0 shadow-sm p-4 bg-glass mb-4">
+            <div class="card-body">
+                <h1 class="h3 fw-bold text-light mb-1">Technical Preparation</h1>
+                <p class="text-secondary mb-0">Select a core computer science topic to practice conceptual questions and solutions</p>
+            </div>
+        </div>
+
+        <!-- Topics Grid -->
+        <div class="row g-4 mb-5">
+            {% for topic in topics %}
+                <div class="col-md-6 col-12">
+                    <a href="/technical-prep/topic/{{ topic }}" class="text-decoration-none card h-100 border-0 shadow-sm p-4 bg-glass hover-scale">
+                        <div class="card-body d-flex align-items-center gap-3">
+                            <div class="bg-indigo-subtle text-indigo rounded-circle p-3 d-inline-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                {% if topic == 'DSA' %}
+                                    <i class="bi bi-code-square fs-3"></i>
+                                {% elif topic == 'DBMS' %}
+                                    <i class="bi bi-database-fill fs-3"></i>
+                                {% elif topic == 'OS' %}
+                                    <i class="bi bi-cpu fs-3"></i>
+                                {% elif topic == 'CN' %}
+                                    <i class="bi bi-globe2 fs-3"></i>
+                                {% else %}
+                                    <i class="bi bi-braces-asterisk fs-3"></i>
+                                {% endif %}
+                            </div>
+                            <div>
+                                <h3 class="h5 fw-bold text-light mb-1">{{ topic }}</h3>
+                                <p class="text-secondary small mb-0">
+                                    {% if topic == 'DSA' %}
+                                        Practice arrays, linked lists, trees, graphs, sorting, and dynamic programming.
+                                    {% elif topic == 'DBMS' %}
+                                        Review relational algebra, SQL, database normalization, indexing, and ACID.
+                                    {% elif topic == 'OS' %}
+                                        Revise process management, memory paging, concurrency, and virtual memory.
+                                    {% elif topic == 'CN' %}
+                                        Study OSI models, TCP/IP protocol suite, DNS routing, and subnets.
+                                    {% else %}
+                                        Master classes, encapsulation, inheritance, polymorphism, and abstraction.
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<style>
+.hover-scale {
+    transition: transform 0.25s ease, border-color 0.25s ease;
+}
+.hover-scale:hover {
+    transform: translateY(-4px);
+    border-color: var(--golden-batter) !important;
+}
+</style>
+{% endblock %}

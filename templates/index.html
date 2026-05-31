@@ -1,0 +1,131 @@
+{% extends "public_base.html" %}
+
+{% block body %}
+<div class="container py-3 text-center">
+    <!-- Centered Header with AI Branding -->
+    <div class="row justify-content-center mb-5">
+        <div class="col-lg-8 px-4">
+            <h1 class="display-3 fw-extrabold text-light mb-2 tracking-tight" style="font-family: 'Playfair Display', serif;">
+                <span class="text-gradient">TalentAI</span>
+            </h1>
+            <h2 class="h5 text-secondary mb-4" style="font-weight: 500; font-family: 'Poppins', sans-serif; letter-spacing: 0.5px;">
+                AI-Powered Placement Intelligence Platform
+            </h2>
+            <p class="fs-6 text-muted mx-auto" style="max-width: 650px; font-weight: 300; line-height: 1.6;">
+                An intelligent career navigation platform running local AI models to map, analyze, and grade candidate placement readiness offline.
+            </p>
+        </div>
+    </div>
+
+    <!-- Split Screen Choice Layout -->
+    <div class="row g-4 justify-content-center px-lg-5 px-3">
+        
+        <!-- Left Side: Student Portal Card -->
+        <div class="col-xl-5 col-lg-6">
+            <div class="card border-0 bg-glass text-start h-100 p-4 border-top border-4 transition-all" style="border-top-color: var(--toasted-caramel) !important;">
+                <div class="card-body d-flex flex-column justify-content-between h-100">
+                    <div>
+                        <!-- Header & Icon -->
+                        <div class="d-flex align-items-center gap-3 mb-4">
+                            <div class="d-inline-flex align-items-center justify-content-center text-light rounded-4 p-3 shadow" style="background-color: var(--toasted-caramel) !important; width: 60px; height: 60px;">
+                                <i class="bi bi-mortarboard-fill fs-3" style="color: var(--golden-batter);"></i>
+                            </div>
+                            <div>
+                                <h3 class="h4 fw-bold text-light mb-0" style="font-family: 'Playfair Display', serif;">Student Portal</h3>
+                                <span class="text-secondary small">For Career Seekers & Candidates</span>
+                            </div>
+                        </div>
+
+                        <p class="text-secondary small mb-4">
+                            Assess your resume alignment, map out skills, and practice mock interviews with real-time feedback loops.
+                        </p>
+
+                        <!-- Key Features List -->
+                        <div class="mb-4">
+                            <h6 class="text-light small fw-bold mb-3">Core Offerings:</h6>
+                            <ul class="list-unstyled d-flex flex-column gap-2 mb-0">
+                                <li class="small text-secondary d-flex align-items-center gap-2">
+                                    <i class="bi bi-check-circle text-success" style="color: var(--golden-batter) !important;"></i> Check ATS score.
+                                </li>
+                                <li class="small text-secondary d-flex align-items-center gap-2">
+                                    <i class="bi bi-chat-left-text text-success" style="color: var(--golden-batter) !important;"></i> Practice interviews.
+                                </li>
+                                <li class="small text-secondary d-flex align-items-center gap-2">
+                                    <i class="bi bi-compass text-success" style="color: var(--golden-batter) !important;"></i> Get career recommendations.
+                                </li>
+                                <li class="small text-secondary d-flex align-items-center gap-2">
+                                    <i class="bi bi-map text-success" style="color: var(--golden-batter) !important;"></i> Track placement readiness.
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- CTA Buttons -->
+                    <div class="d-flex flex-column gap-2 mt-auto pt-3">
+                        <a href="/student/login" class="btn btn-teal py-2.5 text-center rounded-3">
+                            Enter Student Portal <i class="bi bi-arrow-right-short ms-1"></i>
+                        </a>
+                        <a href="/student/register" class="btn btn-outline-secondary py-2 text-center text-light rounded-3 btn-sm border-secondary">
+                            Create Student Account
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Side: Recruiter Portal Card -->
+        <div class="col-xl-5 col-lg-6">
+            <div class="card border-0 bg-glass text-start h-100 p-4 border-top border-4 transition-all" style="border-top-color: var(--spiced-wine) !important;">
+                <div class="card-body d-flex flex-column justify-content-between h-100">
+                    <div>
+                        <!-- Header & Icon -->
+                        <div class="d-flex align-items-center gap-3 mb-4">
+                            <div class="d-inline-flex align-items-center justify-content-center text-light rounded-4 p-3 shadow" style="background-color: var(--spiced-wine) !important; width: 60px; height: 60px;">
+                                <i class="bi bi-building-fill fs-3" style="color: var(--golden-batter);"></i>
+                            </div>
+                            <div>
+                                <h3 class="h4 fw-bold text-light mb-0" style="font-family: 'Playfair Display', serif;">Recruiter Portal</h3>
+                                <span class="text-secondary small">For Talent Acquisition & Companies</span>
+                            </div>
+                        </div>
+
+                        <p class="text-secondary small mb-4">
+                            Post active openings, automatically screen resumes, and instantly rank applicant capabilities with multi-score analytics.
+                        </p>
+
+                        <!-- Key Features List -->
+                        <div class="mb-4">
+                            <h6 class="text-light small fw-bold mb-3">Core Offerings:</h6>
+                            <ul class="list-unstyled d-flex flex-column gap-2 mb-0">
+                                <li class="small text-secondary d-flex align-items-center gap-2">
+                                    <i class="bi bi-plus-circle text-indigo" style="color: var(--golden-batter) !important;"></i> Post jobs.
+                                </li>
+                                <li class="small text-secondary d-flex align-items-center gap-2">
+                                    <i class="bi bi-filter text-indigo" style="color: var(--golden-batter) !important;"></i> Rank applicants.
+                                </li>
+                                <li class="small text-secondary d-flex align-items-center gap-2">
+                                    <i class="bi bi-bar-chart text-indigo" style="color: var(--golden-batter) !important;"></i> Analyze candidates.
+                                </li>
+                                <li class="small text-secondary d-flex align-items-center gap-2">
+                                    <i class="bi bi-lightning text-indigo" style="color: var(--golden-batter) !important;"></i> Track hiring pipeline.
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- CTA Buttons -->
+                    <div class="d-flex flex-column gap-2 mt-auto pt-3">
+                        <a href="/recruiter/login" class="btn btn-indigo py-2.5 text-center rounded-3">
+                            Enter Recruiter Portal <i class="bi bi-arrow-right-short ms-1"></i>
+                        </a>
+                        <a href="/recruiter/register" class="btn btn-outline-secondary py-2 text-center text-light rounded-3 btn-sm border-secondary">
+                            Create Recruiter Account
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

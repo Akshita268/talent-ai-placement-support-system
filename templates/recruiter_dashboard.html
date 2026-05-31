@@ -1,0 +1,357 @@
+{% extends "dashboard_recruiter.html" %}
+
+{% block body %}
+<!-- Welcome Header -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm bg-glass p-4">
+            <div class="card-body py-2">
+                <h1 class="h3 fw-extrabold text-light mb-1">Welcome back, {{ current_user.company_name }}!</h1>
+                <p class="text-secondary mb-0">Track applications, view applicant placement scores, and analyze talent pipelines with placement intelligence insights.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if notifications %}
+<!-- Notifications Panel -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm bg-glass p-4">
+            <div class="card-body py-2">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                    <h3 class="h5 mb-0 text-light"><i class="bi bi-bell-fill text-warning me-2"></i> Notifications</h3>
+                    <a href="/notification/clear-all" class="btn btn-sm btn-outline-danger px-3 py-2 rounded-3 text-light border-danger">
+                        <i class="bi bi-trash3-fill me-1"></i> Clear All Notifications
+                    </a>
+                </div>
+                <div class="d-flex flex-column gap-2">
+                    {% for notification in notifications %}
+                    <div class="p-3 rounded-3 bg-dark border border-secondary border-opacity-20 d-flex justify-content-between align-items-center flex-wrap gap-2">
+                        <div>
+                            <span class="text-secondary small d-block mb-0.5" style="font-size: 0.75rem;">{{ notification.created_at.strftime('%Y-%m-%d %H:%M') }}</span>
+                            <span class="text-light small">{{ notification.message }}</span>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            {% if notification.application_id %}
+                            <a href="/recruiter/application/{{ notification.application_id }}/details" class="btn btn-sm btn-teal py-1.5 px-3">
+                                View Application <i class="bi bi-arrow-right ms-1"></i>
+                            </a>
+                            {% endif %}
+                            <a href="/notification/delete/{{ notification.id }}" class="btn btn-sm btn-outline-secondary text-light border-secondary px-2.5 py-1.5 rounded-3">
+                                <i class="bi bi-x-lg text-danger me-1"></i> Delete
+                            </a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Stat Counters Grid -->
+<div class="row g-4 mb-4">
+    <!-- Stat 1 -->
+    <div class="col-xl-2 col-lg-4 col-md-4 col-sm-6">
+        <div class="card border-0 shadow-sm bg-glass p-3 h-100">
+            <div class="card-body text-center text-sm-start">
+                <h6 class="text-secondary text-uppercase small mb-1.5"><i class="bi bi-briefcase me-1 text-accent"></i> Jobs Posted</h6>
+                <h3 class="display-6 fw-extrabold text-light mb-0">{{ total_jobs }}</h3>
+            </div>
+        </div>
+    </div>
+    <!-- Stat 2 -->
+    <div class="col-xl-2 col-lg-4 col-md-4 col-sm-6">
+        <div class="card border-0 shadow-sm bg-glass p-3 h-100">
+            <div class="card-body text-center text-sm-start">
+                <h6 class="text-secondary text-uppercase small mb-1.5"><i class="bi bi-file-earmark-person me-1 text-accent"></i> Applications</h6>
+                <h3 class="display-6 fw-extrabold text-light mb-0">{{ total_apps }}</h3>
+            </div>
+        </div>
+    </div>
+    <!-- Stat 3 -->
+    <div class="col-xl-2 col-lg-4 col-md-4 col-sm-6">
+        <div class="card border-0 shadow-sm bg-glass p-3 h-100">
+            <div class="card-body text-center text-sm-start">
+                <h6 class="text-secondary text-uppercase small mb-1.5"><i class="bi bi-cpu me-1 text-accent"></i> Avg ATS Match</h6>
+                <h3 class="display-6 fw-extrabold text-gradient mb-0">{{ avg_ats }}%</h3>
+            </div>
+        </div>
+    </div>
+    <!-- Stat 4 -->
+    <div class="col-xl-2 col-lg-4 col-md-4 col-sm-6">
+        <div class="card border-0 shadow-sm bg-glass p-3 h-100">
+            <div class="card-body text-center text-sm-start">
+                <h6 class="text-secondary text-uppercase small mb-1.5"><i class="bi bi-person-dash me-1 text-warning"></i> Shortlisted</h6>
+                <h3 class="display-6 fw-extrabold text-gradient mb-0" style="background: linear-gradient(135deg, var(--golden-batter), var(--toasted-caramel)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">{{ shortlisted_count }}</h3>
+            </div>
+        </div>
+    </div>
+    <!-- Stat 5 -->
+    <div class="col-xl-2 col-lg-4 col-md-4 col-sm-6">
+        <div class="card border-0 shadow-sm bg-glass p-3 h-100">
+            <div class="card-body text-center text-sm-start">
+                <h6 class="text-secondary text-uppercase small mb-1.5"><i class="bi bi-person-check me-1 text-success"></i> Selected</h6>
+                <h3 class="display-6 fw-extrabold text-gradient mb-0" style="background: linear-gradient(135deg, var(--golden-batter), var(--olive-harvest)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">{{ selected_count }}</h3>
+            </div>
+        </div>
+    </div>
+    <!-- Stat 6 -->
+    <div class="col-xl-2 col-lg-4 col-md-4 col-sm-6">
+        <div class="card border-0 shadow-sm bg-glass p-3 h-100">
+            <div class="card-body text-center text-sm-start">
+                <h6 class="text-secondary text-uppercase small mb-1.5"><i class="bi bi-person-x me-1 text-danger"></i> Rejected</h6>
+                <h3 class="display-6 fw-extrabold text-gradient mb-0" style="background: linear-gradient(135deg, var(--spiced-wine), var(--toasted-caramel)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">{{ rejected_count }}</h3>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <!-- AI Insights Card -->
+    <div class="col-lg-6">
+        <div class="card border-0 shadow-sm h-100 p-4 border-start border-4 border-primary" style="border-start-color: var(--spiced-wine) !important;">
+            <div class="card-body">
+                <h5 class="card-title text-light mb-4"><i class="bi bi-robot text-primary me-2" style="color: var(--golden-batter) !important;"></i> Recruiter Insights</h5>
+                <div class="d-flex flex-column gap-3">
+                    {% for insight in insights or [] %}
+                    <div class="p-3 rounded-3 bg-dark border border-secondary border-opacity-20 d-flex gap-2">
+                        <i class="bi bi-info-circle-fill text-indigo mt-0.5" style="color: var(--golden-batter) !important;"></i>
+                        <p class="text-secondary small mb-0">{{ insight }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Candidates Card -->
+    <div class="col-lg-6">
+        <div class="card border-0 shadow-sm h-100 p-4">
+            <div class="card-body">
+                <h5 class="card-title text-light mb-4"><i class="bi bi-trophy text-warning me-2" style="color: var(--golden-batter) !important;"></i> Ranked Candidate Standouts</h5>
+                {% if top_candidates %}
+                <div class="d-flex flex-column gap-3">
+                    {% for candidate in top_candidates or [] %}
+                    <div class="p-3 rounded-3 bg-dark border border-secondary border-opacity-10 d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="fw-bold mb-0 text-light">{{ candidate.get('student_name', '') }}</h6>
+                            <span class="text-secondary small">Applied for: {{ candidate.get('job_role', '') }}</span>
+                        </div>
+                        <div class="text-end">
+                            <span class="badge bg-indigo-subtle text-indigo rounded-pill px-3 py-1">Score: {{ candidate.get('final_score', 0) }}%</span>
+                            <div class="small text-muted mt-1" style="font-size: 0.7rem;">ATS: {{ candidate.get('ats_score', 0) }}% | Resume: {{ candidate.get('resume_match', 0) }}% | Skills: {{ candidate.get('skill_match', 0) }}%</div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="text-muted small">Candidates will appear here once they complete ATS screening and interviews.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <!-- Best Candidate Standout -->
+    <div class="col-lg-6">
+        <div class="card border-0 shadow-sm h-100 p-4 border-start border-4 border-success bg-glass">
+            <div class="card-body">
+                <h5 class="card-title text-light mb-4"><i class="bi bi-star-fill text-warning me-2"></i> Best Candidate Standout</h5>
+                {% if best_candidate %}
+                <div class="p-3 rounded-3 bg-dark bg-opacity-40 border border-secondary border-opacity-10 mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div>
+                            <h4 class="fw-bold text-light mb-1">{{ best_candidate.student_name }}</h4>
+                            <span class="text-secondary">Applying for: <strong>{{ best_candidate.job_role }}</strong></span>
+                        </div>
+                        <span class="badge bg-success text-light rounded-pill px-3 py-2 fs-5">{{ best_candidate.final_score }}% Match</span>
+                    </div>
+                    <div class="row g-2 mb-3">
+                        <div class="col-3">
+                            <span class="text-secondary small d-block">ATS Match</span>
+                            <span class="text-light fw-bold">{{ best_candidate.ats_score }}%</span>
+                        </div>
+                        <div class="col-3">
+                            <span class="text-secondary small d-block">Resume Match</span>
+                            <span class="text-light fw-bold">{{ best_candidate.resume_match }}%</span>
+                        </div>
+                        <div class="col-3">
+                            <span class="text-secondary small d-block">Skill Match</span>
+                            <span class="text-light fw-bold">{{ best_candidate.skill_match }}%</span>
+                        </div>
+                        <div class="col-3">
+                            <span class="text-secondary small d-block">Project Strength</span>
+                            <span class="text-light fw-bold">{{ best_candidate.project_strength }}%</span>
+                        </div>
+                    </div>
+                    <p class="text-secondary small mb-0">This candidate ranks at the top of your applicant pool based on the recruiter placement intelligence formula (30% ATS + 20% Resume Match + 20% Skill Match + 20% Project Strength + 10% Completeness).</p>
+                </div>
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="bi bi-person-x text-muted fs-2 mb-2 d-block"></i>
+                    <span class="text-muted small">No candidates have applied yet.</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Most Common Missing Skills -->
+    <div class="col-lg-6">
+        <div class="card border-0 shadow-sm h-100 p-4 border-start border-4 border-warning bg-glass">
+            <div class="card-body">
+                <h5 class="card-title text-light mb-4"><i class="bi bi-exclamation-triangle-fill text-warning me-2"></i> Most Common Missing Skills</h5>
+                {% if top_missing_skills %}
+                <p class="text-secondary small mb-3">These are the most frequent skill gaps found in candidates' resumes compared to your job description requirements.</p>
+                <div class="d-flex flex-column gap-3">
+                    {% for skill in top_missing_skills %}
+                    {% set freq = top_missing_values[loop.index0] %}
+                    <div>
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <span class="text-light fw-medium small">{{ skill }}</span>
+                            <span class="text-secondary small">{{ freq }} applicant(s) missing</span>
+                        </div>
+                        <div class="progress bg-dark border border-secondary border-opacity-10 rounded-pill" style="height: 6px;">
+                            {% set pct = (freq / total_apps * 100) | round | int if total_apps > 0 else 0 %}
+                            <div class="progress-bar bg-warning" role="progressbar" style="width: {{ pct }}%;" aria-valuenow="{{ pct }}" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="bi bi-check-circle-fill text-success fs-2 mb-2 d-block"></i>
+                    <span class="text-muted small">No skill gaps detected in the applicant pool.</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Funnel Chart -->
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm p-4">
+            <div class="card-body">
+                <h5 class="card-title text-light mb-3">Hiring Funnel</h5>
+                <div style="position: relative; height: 200px;">
+                    <canvas id="funnelChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Skill Match Bar -->
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm p-4">
+            <div class="card-body">
+                <h5 class="card-title text-light mb-3">Top Requested Skills</h5>
+                <div style="position: relative; height: 200px;">
+                    <canvas id="skillsChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ATS Dist Chart -->
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm p-4">
+            <div class="card-body">
+                <h5 class="card-title text-light mb-3">ATS Score Tiers</h5>
+                <div style="position: relative; height: 200px;">
+                    <canvas id="atsChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const funnelCtx = document.getElementById('funnelChart').getContext('2d');
+        new Chart(funnelCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Applied', 'Shortlisted', 'Interview Scheduled', 'Selected', 'Rejected'],
+                datasets: [{
+                    label: 'Candidates',
+                    data: [{{ funnel.get('Applied', 0) }}, {{ funnel.get('Shortlisted', 0) }}, {{ funnel.get('Interview Scheduled', 0) }}, {{ funnel.get('Selected', 0) }}, {{ funnel.get('Rejected', 0) }}],
+        backgroundColor: 'rgba(116, 48, 20, 0.6)', // Spiced Wine
+        borderColor: 'rgba(116, 48, 20, 1)',
+        borderWidth: 1,
+        borderRadius: 4
+                }]
+            },
+        options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            y: { grid: { color: 'rgba(232, 209, 167, 0.05)' }, ticks: { color: '#9D9167' } },
+            x: { grid: { display: false }, ticks: { color: '#9D9167' } }
+        },
+        plugins: { legend: { display: false } }
+    }
+        });
+
+    const skillsCtx = document.getElementById('skillsChart').getContext('2d');
+    new Chart(skillsCtx, {
+        type: 'bar',
+        data: {
+            labels: {{ top_skills| tojson | safe }},
+        datasets: [{
+            label: 'Applicants Possessing',
+            data: {{ top_skill_values| tojson | safe }},
+        backgroundColor: 'rgba(132, 89, 43, 0.6)', // Toasted Caramel
+        borderColor: 'rgba(132, 89, 43, 1)',
+        borderWidth: 1,
+        borderRadius: 4
+                }]
+            },
+        options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        indexAxis: 'y',
+        scales: {
+            x: { grid: { color: 'rgba(232, 209, 167, 0.05)' }, ticks: { color: '#9D9167' } },
+            y: { grid: { display: false }, ticks: { color: '#9D9167' } }
+        },
+        plugins: { legend: { display: false } }
+    }
+        });
+
+    const atsCtx = document.getElementById('atsChart').getContext('2d');
+    new Chart(atsCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Excellent (>=80)', 'Good (60-79)', 'Average (40-59)', 'Low (<40)'],
+            datasets: [{
+                data: [{{ ats_dist.get('Excellent', 0) }}, {{ ats_dist.get('Good', 0) }}, {{ ats_dist.get('Average', 0) }}, {{ ats_dist.get('Low', 0) }}],
+        backgroundColor: [
+        'rgba(157, 145, 103, 0.7)', // Olive Harvest
+        'rgba(232, 209, 167, 0.7)', // Golden Batter
+        'rgba(132, 89, 43, 0.7)',  // Toasted Caramel
+        'rgba(116, 48, 20, 0.7)'   // Spiced Wine
+    ],
+        borderColor: 'rgba(44, 28, 17, 1)',
+        borderWidth: 2
+                }]
+            },
+        options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'right',
+                labels: { color: '#9D9167', font: { size: 10 } }
+            }
+        }
+    }
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends 'public_base.html' %}
+
+{% block body %}
+<div class="row justify-content-center align-items-center" style="min-height: 60vh;">
+    <div class="col-md-5 col-sm-8 col-11 text-center">
+        <div class="card bg-glass border-0 p-5 shadow">
+            <div class="card-body">
+                <i class="bi bi-mortarboard-fill fs-1 text-gradient mb-3 d-block"></i>
+                <h2 class="h3 text-light mb-4" style="font-family: 'Playfair Display', serif;">Student Portal</h2>
+                <div class="d-flex flex-column gap-3">
+                    <a href="{{ url_for('student.student_login') }}" class="btn btn-teal py-2.5 rounded-3">
+                        Sign In
+                    </a>
+                    <a href="{{ url_for('student.student_register') }}" class="btn btn-outline-secondary text-light py-2.5 rounded-3 border-secondary">
+                        Create Candidate Account
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

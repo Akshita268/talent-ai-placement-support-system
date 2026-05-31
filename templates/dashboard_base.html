@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block layout %}
+    <div class="app-wrapper">
+        <!-- Sidebar Navigation -->
+        {% if session.get('student_id') %}
+            <!-- Student Navigation Menu -->
+            <div class="sidebar">
+                <a href="/student/dashboard" class="brand">
+                    <i class="bi bi-cpu-fill fs-4"></i> TalentAI Student
+                </a>
+                <ul class="nav-menu">
+                    <li>
+                        <a href="/student/dashboard" class="nav-link-custom {% if request.path == '/student/dashboard' %}active{% endif %}">
+                            <i class="bi bi-speedometer2"></i> Dashboard
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/jobs" class="nav-link-custom {% if request.path == '/jobs' %}active{% endif %}">
+                            <i class="bi bi-briefcase"></i> Browse Jobs
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/student/resume-compare" class="nav-link-custom {% if request.path == '/student/resume-compare' %}active{% endif %}">
+                            <i class="bi bi-file-earmark-diff"></i> Resume Compare
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/my_applications" class="nav-link-custom {% if request.path == '/my_applications' %}active{% endif %}">
+                            <i class="bi bi-check-circle"></i> My Applications
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/interview" class="nav-link-custom {% if request.path == '/interview' %}active{% endif %}">
+                            <i class="bi bi-chat-left-text"></i> HR Interview Prep
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/technical_interview" class="nav-link-custom {% if request.path == '/technical_interview' %}active{% endif %}">
+                            <i class="bi bi-terminal"></i> Technical Interview Prep
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/coding-prep" class="nav-link-custom {% if request.path.startswith('/coding-prep') %}active{% endif %}">
+                            <i class="bi bi-code-slash"></i> Coding Preparation
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/student/profile" class="nav-link-custom {% if request.path == '/student/profile' %}active{% endif %}">
+                            <i class="bi bi-person-fill"></i> Profile
+                        </a>
+                    </li>
+
+                    <li class="mt-auto">
+                        <a href="/student/logout" class="nav-link-custom text-danger">
+                            <i class="bi bi-box-arrow-left"></i> Logout
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        {% elif current_user.is_authenticated %}
+            <!-- Recruiter Navigation Menu -->
+            <div class="sidebar">
+                <a href="/recruiter/dashboard" class="brand">
+                    <i class="bi bi-briefcase-fill fs-4"></i> TalentAI Recruiter
+                </a>
+                <ul class="nav-menu">
+                    <li>
+                        <a href="/recruiter/dashboard" class="nav-link-custom {% if request.path == '/recruiter/dashboard' %}active{% endif %}">
+                            <i class="bi bi-speedometer2"></i> Dashboard
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/recruiter/create-job" class="nav-link-custom {% if request.path == '/recruiter/create-job' %}active{% endif %}">
+                            <i class="bi bi-plus-circle"></i> Post A Job
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/recruiter/jobs" class="nav-link-custom {% if request.path == '/recruiter/jobs' %}active{% endif %}">
+                            <i class="bi bi-list-task"></i> Manage Jobs
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/recruiter/profile" class="nav-link-custom {% if request.path == '/recruiter/profile' %}active{% endif %}">
+                            <i class="bi bi-building"></i> Profile
+                        </a>
+                    </li>
+                    <li class="mt-auto">
+                        <a href="/recruiter/logout" class="nav-link-custom text-danger">
+                            <i class="bi bi-box-arrow-left"></i> Logout
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        {% endif %}
+
+        <!-- Main Content Area -->
+        <div class="main-content {% if not session.get('student_id') and not current_user.is_authenticated %}m-0 p-4 w-100{% endif %}">
+            <div class="fade-in">
+                {% block body %}
+                {% endblock %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

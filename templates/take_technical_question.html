@@ -1,0 +1,29 @@
+{% extends "dashboard_student.html" %}
+
+{% block body %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm p-4 bg-glass mb-4">
+            <div class="card-body">
+                <div class="d-flex align-items-center justify-content-between mb-4">
+                    <span class="badge bg-indigo rounded-pill px-3 py-1.5 fs-6">Question {{ question_number }} of 5</span>
+                    <span class="text-secondary small"><i class="bi bi-clock-history"></i> Auto-evaluating</span>
+                </div>
+                
+                <h3 class="h4 text-light mb-4">{{ question }}</h3>
+
+                <form method="POST" action="/submit_technical_answer">
+                    <div class="mb-4">
+                        <label for="answer" class="form-label text-muted small">Your Explanation</label>
+                        <textarea class="form-control bg-dark border-secondary text-light font-monospace" id="answer" name="answer" rows="8" placeholder="Type your technical explanation here..." required></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-indigo w-100 py-2 rounded-3">
+                        Submit Answer <i class="bi bi-arrow-right-short ms-1"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

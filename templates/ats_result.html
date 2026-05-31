@@ -1,0 +1,233 @@
+{% extends "dashboard_student.html" %}
+
+{% block body %}
+<div class="row justify-content-center">
+    <div class="col-xl-10">
+        <!-- Header Card -->
+        <div class="card border-0 shadow-sm p-4 bg-glass mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                    <div>
+                        <h6 class="text-secondary text-uppercase small tracking-wider mb-1"><i
+                                class="bi bi-cpu-fill text-indigo me-1"></i> TalentAI Analyzer Result</h6>
+                        <h1 class="h2 fw-extrabold text-light mb-1">ATS Resume Analysis Report</h1>
+                        <p class="text-secondary mb-0">Role: <strong>{{ job.job_role }}</strong> at <strong>{{
+                                job.company_name }}</strong></p>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <a href="/jobs" class="btn btn-outline-secondary text-light border-secondary">
+                            <i class="bi bi-arrow-left"></i> Job Search
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scores Grid -->
+        <div class="row g-4 mb-4">
+            {% set embedding_width = ats_result.get('embedding_score', 0) | int ~ '%' %}
+            {% set skill_width = ats_result.get('skill_match_score', 0) | int ~ '%' %}
+            {% set project_width = ((ats_result.get('project_score', 0) / 20) * 100) | int ~ '%' %}
+
+            <!-- Overall ATS Score Circular Indicator -->
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm h-100 p-4 text-center justify-content-center align-items-center">
+                    <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                        <h6 class="text-secondary text-uppercase small fw-bold mb-3">Overall ATS Score</h6>
+                        <div class="score-circle-wrapper mb-3">
+                            <div class="score-circle-value">{{ ats_result.get('ats_score', 0) }}%</div>
+                        </div>
+                        <span class="badge bg-indigo-subtle text-indigo px-3 py-1.5 rounded-pill fw-semibold">{{
+                            ats_result.get('feedback', '') }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detailed Breakdowns -->
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm h-100 p-4">
+                    <div class="card-body">
+                        <h5 class="text-light mb-4"><i class="bi bi-sliders text-indigo me-2"></i> Scoring Matrix
+                            Breakdown</h5>
+
+                        <!-- Metric 1: Embedding Semantic Similarity -->
+                        <div class="mb-4">
+                            <div class="d-flex justify-content-between align-items-center mb-1.5">
+                                <span class="small text-secondary fw-semibold"><i class="bi bi-bezier2 me-1"></i>
+                                    Semantic Context Score</span>
+                                <span class="small text-light fw-bold">{{ ats_result.get('embedding_score', 0) | int
+                                    }}%</span>
+                            </div>
+                            <div class="progress bg-dark rounded-pill" style="height: 10px;">
+                                <div class="progress-bar" role="progressbar"
+                                    style="width: {{ embedding_width | default('0%') }};"
+                                    aria-valuenow="{{ ats_result.get('embedding_score', 0) }}" aria-valuemin="0"
+                                    aria-valuemax="100"></div>
+                            </div>
+                            <span class="text-muted small" style="font-size: 0.75rem;">Calculated via
+                                sentence-embeddings comparing your projects and JD context.</span>
+                        </div>
+
+                        <!-- Metric 2: Skill Match Score -->
+                        <div class="mb-4">
+                            <div class="d-flex justify-content-between align-items-center mb-1.5">
+                                <span class="small text-secondary fw-semibold"><i class="bi bi-tags-fill me-1"></i>
+                                    Keyword Skill Alignment</span>
+                                <span class="small text-light fw-bold">{{ ats_result.get('skill_match_score', 0) | int
+                                    }}%</span>
+                            </div>
+                            <div class="progress bg-dark rounded-pill" style="height: 10px;">
+                                <div class="progress-bar" role="progressbar"
+                                    style="width: {{ skill_width | default('0%') }};"
+                                    aria-valuenow="{{ ats_result.get('skill_match_score', 0) }}" aria-valuemin="0"
+                                    aria-valuemax="100"></div>
+                            </div>
+                            <span class="text-muted small" style="font-size: 0.75rem;">Percent of explicitly requested
+                                core requirements matching your resume keywords.</span>
+                        </div>
+
+                        <!-- Metric 3: Project Execution Score -->
+                        <div>
+                            <div class="d-flex justify-content-between align-items-center mb-1.5">
+                                <span class="small text-secondary fw-semibold"><i class="bi bi-terminal-fill me-1"></i>
+                                    Project Depth Index</span>
+                                <span class="small text-light fw-bold">{{ ats_result.get('project_score', 0) }} /
+                                    20</span>
+                            </div>
+                            <div class="progress bg-dark rounded-pill" style="height: 10px;">
+                                <div class="progress-bar" role="progressbar"
+                                    style="width: {{ project_width }};"
+                                    aria-valuenow="{{ ats_result.get('project_score', 0) }}" aria-valuemin="0"
+                                    aria-valuemax="20"></div>
+                            </div>
+                            <span class="text-muted small" style="font-size: 0.75rem;">Scans for action verbs and
+                                execution details inside project blocks (Max 20).</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recruiter Match Prediction Alert -->
+        <div class="card border-0 shadow-sm mb-4 p-3 border-start border-4 border-success bg-glass"
+            style="border-start-color: var(--golden-batter) !important;">
+            <div class="card-body d-flex align-items-center gap-3">
+                <div class="bg-indigo-subtle text-indigo rounded-circle p-2 d-inline-flex align-items-center justify-content-center"
+                    style="width: 44px; height: 44px;">
+                    <i class="bi bi-robot fs-5"></i>
+                </div>
+                <div>
+                    <h6 class="text-light mb-0.5 fw-bold">Recruiter Match Prediction: <span class="text-gradient">{{
+                            feedback_result.get('prediction', '') }}</span></h6>
+                    <p class="text-secondary small mb-0">Our local matching predictor indicates recruiters will consider
+                        this resume as a <strong>{{ feedback_result.get('prediction', '').lower() }}</strong> for this
+                        application.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Skills Analysis Grid -->
+        <div class="row g-4 mb-4">
+            <!-- Matched Skills -->
+            <div class="col-md-6">
+                <div class="card border-0 shadow-sm h-100 p-4">
+                    <div class="card-body">
+                        <h5 class="text-light mb-3"><i class="bi bi-patch-check-fill text-success me-2"></i> Matched
+                            Resume Skills</h5>
+                        {% if ats_result.get('matched_skills', []) %}
+                        <div class="d-flex flex-wrap gap-1.5">
+                            {% for skill in ats_result.get('matched_skills', []) %}
+                            <span
+                                class="badge bg-success-subtle text-success-emphasis rounded-pill px-3 py-1.5 small"><i
+                                    class="bi bi-check-lg me-1"></i> {{ skill.title() }}</span>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <p class="text-muted small">No overlapping skills found. Try adding keywords from the job
+                            listing.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Missing Skills -->
+            <div class="col-md-6">
+                <div class="card border-0 shadow-sm h-100 p-4">
+                    <div class="card-body">
+                        <h5 class="text-light mb-3"><i class="bi bi-patch-exclamation-fill text-danger me-2"></i>
+                            Missing Job Skills</h5>
+                        {% if ats_result.get('missing_skills', []) %}
+                        <div class="d-flex flex-wrap gap-1.5">
+                            {% for skill in ats_result.get('missing_skills', []) %}
+                            <span class="badge bg-danger-subtle text-danger-emphasis rounded-pill px-3 py-1.5 small"><i
+                                    class="bi bi-x-lg me-1"></i> {{ skill.title() }}</span>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <span class="badge bg-success-subtle text-success-emphasis rounded-pill px-3 py-1.5 small"><i
+                                class="bi bi-star-fill me-1"></i> Excellent coverage! No missing core skills.</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI Feedback and Suggestions -->
+        <div class="row g-4 mb-5">
+            <!-- Strengths -->
+            <div class="col-lg-6 col-md-6">
+                <div class="card border-0 shadow-sm h-100 p-4">
+                    <div class="card-body">
+                        <h5 class="text-light mb-3"><i class="bi bi-shield-fill-check text-indigo me-2"></i> Resume
+                            Strengths</h5>
+                        <ul class="list-group list-group-flush bg-transparent">
+                            {% for item in feedback_result.get('strengths', []) %}
+                            <li
+                                class="list-group-item bg-transparent text-secondary border-secondary border-opacity-10 py-2.5 small">
+                                <i class="bi bi-arrow-right text-indigo me-2"></i> {{ item }}
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Improvement Suggestions -->
+            <div class="col-lg-6 col-md-6">
+                <div class="card border-0 shadow-sm h-100 p-4">
+                    <div class="card-body">
+                        <h5 class="text-light mb-3"><i class="bi bi-tools text-warning me-2"></i> Actionable Suggestions
+                        </h5>
+                        <ul class="list-group list-group-flush bg-transparent">
+                            {% for item in feedback_result.get('suggestions', []) %}
+                            <li
+                                class="list-group-item bg-transparent text-secondary border-secondary border-opacity-10 py-2.5 small">
+                                <i class="bi bi-wrench-adjustable text-warning me-2"></i> {{ item }}
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action CTAs -->
+        <div class="card border-0 shadow-sm p-4 bg-glass text-center mb-5">
+            <div class="card-body">
+                <h5 class="text-light mb-3">What would you like to do next?</h5>
+                <div class="d-flex justify-content-center align-items-center flex-wrap gap-3">
+                    <a href="{{ url_for('student.final_apply', job_id=job.id) }}"
+                        class="btn btn-success px-4 py-2.5 rounded-3">
+                        <i class="bi bi-check-circle-fill me-1"></i> Submit Application Anyway
+                    </a>
+                    <a href="{{ url_for('student.check_ats', job_id=job.id) }}"
+                        class="btn btn-teal px-4 py-2.5 rounded-3">
+                        <i class="bi bi-cloud-upload-fill me-1"></i> Upload Optimized Resume
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

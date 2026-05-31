@@ -1,0 +1,41 @@
+{% extends 'public_base.html' %}
+
+{% block body %}
+<div class="row justify-content-center align-items-center" style="min-height: 60vh;">
+    <div class="col-md-5 col-sm-8 col-11">
+        <div class="card bg-glass border-0 p-4 shadow">
+            <div class="card-body">
+                <div class="text-center mb-4">
+                    <i class="bi bi-building-fill fs-1 text-gradient"></i>
+                    <h2 class="h3 text-light mt-2 mb-1" style="font-family: 'Playfair Display', serif;">Recruiter Register</h2>
+                    <p class="text-secondary small">Register your company to source AI-ranked candidates</p>
+                </div>
+                
+                <form method="POST">
+                    <div class="mb-3">
+                        <label class="form-label text-secondary small fw-medium">Company Name</label>
+                        <input type="text" name="company_name" class="form-control text-light px-3 py-2" placeholder="Acme Corp" required style="border-radius: 0.5rem; background-color: rgba(20, 10, 5, 0.4) !important; border: 1px solid var(--border-color);">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-secondary small fw-medium">Work Email</label>
+                        <input type="email" name="email" class="form-control text-light px-3 py-2" placeholder="recruiter@company.com" required style="border-radius: 0.5rem; background-color: rgba(20, 10, 5, 0.4) !important; border: 1px solid var(--border-color);">
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label text-secondary small fw-medium">Password</label>
+                        <input type="password" name="password" class="form-control text-light px-3 py-2" placeholder="••••••••" required style="border-radius: 0.5rem; background-color: rgba(20, 10, 5, 0.4) !important; border: 1px solid var(--border-color);">
+                    </div>
+                    
+                    <button type="submit" class="btn btn-indigo w-100 py-2.5 rounded-3 mb-3">
+                        Register
+                    </button>
+                </form>
+                
+                <div class="text-center pt-2 border-top" style="border-color: var(--border-color) !important;">
+                    <span class="text-secondary small">Already have an account?</span>
+                    <a href="/recruiter/login" class="small text-gradient-spiced ms-1 fw-bold text-decoration-none">Sign In</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

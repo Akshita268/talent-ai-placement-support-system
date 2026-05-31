@@ -1,0 +1,101 @@
+{% extends "dashboard_recruiter.html" %}
+
+{% block body %}
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <!-- Profile Header Card -->
+        <div class="card border-0 shadow-sm p-4 bg-glass mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                    <div>
+                        <h1 class="h3 fw-bold text-light mb-1">Company Profile</h1>
+                        <p class="text-secondary mb-0">Manage company settings and view overall recruiting statistics</p>
+                    </div>
+                    <a href="/recruiter/dashboard" class="btn btn-outline-secondary text-light border-secondary px-3 py-2 rounded-3">
+                        <i class="bi bi-arrow-left"></i> Back To Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <!-- Left Side: Profile Edit Form -->
+            <div class="col-lg-6">
+                <div class="card border-0 shadow-sm p-4 bg-glass h-100">
+                    <div class="card-body">
+                        <div class="text-center mb-4">
+                            <!-- Initials Avatar -->
+                            <div class="d-flex align-items-center justify-content-center rounded-circle mx-auto mb-3 shadow" 
+                                 style="width: 100px; height: 100px; font-size: 2.2rem; font-family: 'Playfair Display', serif; background-color: var(--primary); color: var(--text-light); border: 3px double var(--border-color);">
+                                {{ recruiter.company_name[:2].upper() }}
+                            </div>
+                            <h4 class="h5 text-light mb-1">{{ recruiter.company_name }}</h4>
+                            <span class="badge bg-indigo-subtle text-indigo rounded-pill px-3 py-1">Recruiter</span>
+                        </div>
+
+                        <form method="POST" action="/recruiter/profile">
+                            <div class="mb-3">
+                                <label class="form-label text-muted small fw-medium">Company Name</label>
+                                <input type="text" name="company_name" class="form-control text-light px-3 py-2" 
+                                       value="{{ recruiter.company_name }}" required>
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label text-muted small fw-medium">Work Email Address</label>
+                                <input type="email" name="email" class="form-control text-light px-3 py-2" 
+                                       value="{{ recruiter.email }}" required>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary w-100 py-2.5 rounded-3">
+                                Save Profile Changes <i class="bi bi-check-circle ms-1"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side: Recruiter Statistics -->
+            <div class="col-lg-6">
+                <div class="card border-0 shadow-sm p-4 bg-glass h-100">
+                    <div class="card-body">
+                        <h4 class="h5 text-light mb-4"><i class="bi bi-building-fill text-accent me-2"></i> Recruiting Stats</h4>
+                        
+                        <div class="row g-3">
+                            <!-- Stat 1: Jobs Posted -->
+                            <div class="col-4">
+                                <div class="p-3 bg-dark border border-secondary border-opacity-10 rounded-3 text-center">
+                                    <i class="bi bi-briefcase fs-3 text-gradient mb-1 d-block"></i>
+                                    <span class="text-secondary small d-block mb-1">Jobs Posted</span>
+                                    <span class="h4 fw-bold text-light">{{ total_jobs }}</span>
+                                </div>
+                            </div>
+                            <!-- Stat 2: Total Applications -->
+                            <div class="col-4">
+                                <div class="p-3 bg-dark border border-secondary border-opacity-10 rounded-3 text-center">
+                                    <i class="bi bi-file-earmark-person fs-3 text-gradient mb-1 d-block"></i>
+                                    <span class="text-secondary small d-block mb-1">Applications</span>
+                                    <span class="h4 fw-bold text-light">{{ total_apps }}</span>
+                                </div>
+                            </div>
+                            <!-- Stat 3: Average ATS Match -->
+                            <div class="col-4">
+                                <div class="p-3 bg-dark border border-secondary border-opacity-10 rounded-3 text-center">
+                                    <i class="bi bi-cpu fs-3 text-gradient mb-1 d-block"></i>
+                                    <span class="text-secondary small d-block mb-1">Avg ATS</span>
+                                    <span class="h4 fw-bold text-light">{{ avg_ats }}%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Info Card -->
+                        <div class="p-3 rounded-3 bg-indigo bg-opacity-10 border border-indigo border-opacity-15 mt-5">
+                            <h6 class="text-indigo small fw-bold mb-1"><i class="bi bi-shield-fill-check me-1"></i> Talent Sourcing Platform</h6>
+                            <p class="text-secondary small mb-0">Use the job creation tool to publish roles. Applications will automatically calculate ATS alignments for candidate pipelines.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

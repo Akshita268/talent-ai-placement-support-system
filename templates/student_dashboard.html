@@ -1,0 +1,402 @@
+{% extends "dashboard_student.html" %}
+
+{% block body %}
+<!-- Welcome Header -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm bg-glass p-4">
+            <div class="card-body py-2">
+                <h1 class="h3 fw-extrabold text-light mb-1">Welcome back, {{ student.full_name }}!</h1>
+                <p class="text-secondary mb-0">Track your interview readiness, explore career paths, and analyze skill
+                    gaps powered by offline AI.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if notifications %}
+<!-- Notifications Panel -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm bg-glass p-4">
+            <div class="card-body py-2">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                    <h3 class="h5 mb-0 text-light"><i class="bi bi-bell-fill text-warning me-2"></i> Notifications</h3>
+                    <a href="/notification/clear-all" class="btn btn-sm btn-outline-danger px-3 py-2 rounded-3 text-light border-danger">
+                        <i class="bi bi-trash3-fill me-1"></i> Clear All Notifications
+                    </a>
+                </div>
+                <div class="d-flex flex-column gap-2">
+                    {% for notification in notifications %}
+                    <div class="p-3 rounded-3 bg-dark border border-secondary border-opacity-20 d-flex justify-content-between align-items-center flex-wrap gap-2">
+                        <div>
+                            <span class="text-secondary small d-block mb-0.5" style="font-size: 0.75rem;">{{ notification.created_at.strftime('%Y-%m-%d %H:%M') }}</span>
+                            <span class="text-light small">{{ notification.message }}</span>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            {% if notification.application and notification.application.status in ['Shortlisted', 'Selected'] %}
+                                {% if notification.application.contact_details %}
+                                    <span class="badge bg-success-subtle text-success-emphasis rounded-pill px-3 py-1.5 small"><i class="bi bi-check-circle-fill me-1"></i> Details Submitted</span>
+                                {% else %}
+                                    <a href="/student/application/{{ notification.application_id }}/contact-details" class="btn btn-sm btn-teal py-1.5 px-3">
+                                        Submit Contact Details <i class="bi bi-arrow-right ms-1"></i>
+                                    </a>
+                                {% endif %}
+                            {% endif %}
+                            <a href="/notification/delete/{{ notification.id }}" class="btn btn-sm btn-outline-secondary text-light border-secondary px-2.5 py-1.5 rounded-3">
+                                <i class="bi bi-x-lg text-danger me-1"></i> Delete
+                            </a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<div class="row g-4">
+    <!-- Left Column: Performance, Target Role & Job Recommendations -->
+    <div class="col-lg-6">
+
+        <!-- Interview Readiness Card -->
+        <div class="card border-0 shadow-sm mb-4 bg-glass p-4">
+            <div class="card-body">
+                <h3 class="h5 mb-4 text-light"><i class="bi bi-shield-check text-accent me-2"
+                        style="color: var(--golden-batter) !important;"></i> AI Interview Readiness</h3>
+                <div class="d-flex align-items-center justify-content-between mb-4">
+                    <div>
+                        <h6 class="text-secondary text-uppercase small tracking-wider mb-1">Readiness Score</h6>
+                        <h2 class="display-5 fw-extrabold text-light mb-0">{{ readiness_score }}<span
+                                class="fs-6 text-muted">/100</span></h2>
+                    </div>
+                    <div class="progress-ring-wrapper">
+                        <!-- Custom progress bar display -->
+                        <div class="progress bg-dark border border-secondary border-opacity-20 rounded-pill"
+                            style="height: 12px; width: 150px;">
+                            <div class="progress-bar" role="progressbar" style="width: {{ readiness_score }}%;"
+                                aria-valuenow="{{ readiness_score }}" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Strengths & Weak Areas Grid -->
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <div class="p-3 rounded-3 bg-success-subtle bg-opacity-10 border border-success border-opacity-10 h-100"
+                            style="background-color: rgba(132, 89, 43, 0.1) !important; border-color: rgba(232, 209, 167, 0.15) !important;">
+                            <h6 class="fw-bold mb-2" style="color: var(--golden-batter) !important;"><i
+                                    class="bi bi-patch-check-fill me-1"></i> Core Strengths</h6>
+                            <ul class="list-unstyled mb-0 small text-secondary">
+                                {% for str_item in strengths %}
+                                <li class="mb-1.5"><i class="bi bi-check2 text-success me-1"
+                                        style="color: var(--golden-batter) !important;"></i> {{ str_item }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="p-3 rounded-3 bg-warning-subtle bg-opacity-10 border border-warning border-opacity-10 h-100"
+                            style="background-color: rgba(116, 48, 20, 0.1) !important; border-color: rgba(116, 48, 20, 0.25) !important;">
+                            <h6 class="fw-bold mb-2" style="color: var(--olive-harvest) !important;"><i
+                                    class="bi bi-exclamation-triangle-fill me-1"></i> Areas to Improve</h6>
+                            <ul class="list-unstyled mb-0 small text-secondary">
+                                {% for weak_item in weak_areas %}
+                                <li class="mb-1.5"><i class="bi bi-arrow-right-short text-warning me-1"
+                                        style="color: var(--olive-harvest) !important;"></i> {{ weak_item }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-3 bg-light-subtle rounded-3 border border-secondary border-opacity-10 mb-0">
+                    <h6 class="fw-bold mb-1"><i class="bi bi-rocket-takeoff-fill text-warning me-1"
+                            style="color: var(--golden-batter) !important;"></i> AI Improvement Plan</h6>
+                    <p class="text-secondary small mb-0">{{ improvement_plan }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Target Role & Career Alignment Card -->
+        <div class="card border-0 shadow-sm mb-4 p-4">
+            <div class="card-body">
+                <h3 class="h5 mb-4 text-light"><i class="bi bi-compass-fill text-indigo me-2"
+                        style="color: var(--golden-batter) !important;"></i> Target Career Profile</h3>
+
+                <form action="/student/set_target_role" method="POST" class="mb-4">
+                    <label class="form-label text-muted small">Select Target Role</label>
+                    <div class="input-group">
+                        <select class="form-select bg-dark border-secondary text-light" name="target_role" required>
+                            <option value="" disabled selected>Choose a path...</option>
+                            <option value="Backend Developer" {% if student.target_role=='Backend Developer'
+                                %}selected{% endif %}>Backend Developer</option>
+                            <option value="Frontend Developer" {% if student.target_role=='Frontend Developer'
+                                %}selected{% endif %}>Frontend Developer</option>
+                            <option value="Full Stack Developer" {% if student.target_role=='Full Stack Developer'
+                                %}selected{% endif %}>Full Stack Developer</option>
+                            <option value="Data Analyst" {% if student.target_role=='Data Analyst' %}selected{% endif
+                                %}>Data Analyst</option>
+                            <option value="ML Engineer" {% if student.target_role=='ML Engineer' %}selected{% endif %}>
+                                ML Engineer</option>
+                        </select>
+                        <button class="btn btn-indigo" type="submit">Update Path</button>
+                    </div>
+                </form>
+
+                {% if student.career_recommendation %}
+                <div class="p-3 rounded-3 bg-dark border border-secondary border-opacity-20">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="text-indigo fw-bold" style="color: var(--golden-batter) !important;">AI Career
+                            Recommendation</span>
+                        <span class="badge bg-indigo-subtle text-indigo rounded-pill px-3">Aligned</span>
+                    </div>
+                    <p class="text-secondary small mb-0">{{ student.career_recommendation }}</p>
+                </div>
+                {% else %}
+                <p class="text-muted small mb-0">Select a Target Role above to check compatibility alignment.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- AI Skill Gap Analysis Card -->
+        <div class="card border-0 shadow-sm mb-4 p-4">
+            <div class="card-body">
+                <h3 class="h5 mb-4 text-light"><i class="bi bi-lightning-charge-fill text-danger me-2"
+                        style="color: var(--golden-batter) !important;"></i> AI Skill Gap Analysis</h3>
+
+                {% if student.target_role %}
+                <div class="mb-3">
+                    <h6 class="text-secondary small fw-bold mb-2">Role Requirements for {{ student.target_role }}</h6>
+                    <div class="d-flex flex-wrap gap-1.5 mb-3">
+                        {% for skill in role_skills %}
+                        {% if skill in matched_skills %}
+                        <span class="badge bg-success-subtle text-success-emphasis rounded-pill px-2.5 py-1.5"><i
+                                class="bi bi-check-lg me-1"></i>{{ skill.title() }}</span>
+                        {% else %}
+                        <span class="badge bg-danger-subtle text-danger-emphasis rounded-pill px-2.5 py-1.5"><i
+                                class="bi bi-x-lg me-1"></i>{{ skill.title() }}</span>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-12">
+                        <div class="p-3 rounded-3 bg-dark border border-secondary border-opacity-10">
+                            <h6 class="fw-bold text-indigo mb-2" style="color: var(--golden-batter) !important;"><i
+                                    class="bi bi-mortarboard-fill me-1"></i> Recommended Learning Actions</h6>
+                            <ol class="mb-0 ps-3 small text-secondary">
+                                {% for action in skill_gap_recommendations %}
+                                <li class="mb-1.5 fw-medium text-light">{{ action }}</li>
+                                {% endfor %}
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+                <p class="text-muted small mb-0">Skill gap analysis will map your resume skills against role profiles
+                    once you select a Target Role.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Column: Performance Charts & Learning Roadmaps -->
+    <div class="col-lg-6">
+
+        <!-- Chart Card -->
+        <div class="card border-0 shadow-sm mb-4 p-4">
+            <div class="card-body">
+                <h3 class="h5 mb-3 text-light"><i class="bi bi-bar-chart-line-fill text-indigo me-2"
+                        style="color: var(--golden-batter) !important;"></i> Performance Analysis</h3>
+                <div style="position: relative; height:250px; width:100%;">
+                    <canvas id="performanceChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Learning Roadmap Card -->
+        <div class="card border-0 shadow-sm mb-4 p-4">
+            <div class="card-body">
+                <h3 class="h5 mb-4 text-light"><i class="bi bi-map-fill text-warning me-2"
+                        style="color: var(--golden-batter) !important;"></i> AI Learning Roadmap</h3>
+
+                {% if roadmap_data %}
+                <div class="mb-3 d-flex align-items-center justify-content-between">
+                    <div>
+                        <span class="text-muted small">Target Role:</span>
+                        <span class="badge bg-warning-subtle text-warning-emphasis rounded-pill px-3 py-1 ms-1">{{
+                            roadmap_data.get('role', '') }}</span>
+                    </div>
+                </div>
+
+                <!-- Nav tabs -->
+                <ul class="nav nav-tabs border-secondary mb-3" id="roadmapTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active text-light border-0" id="weekly-tab" data-bs-toggle="tab"
+                            data-bs-target="#weekly" type="button" role="tab" aria-controls="weekly"
+                            aria-selected="true">Weekly</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link text-light border-0" id="monthly-tab" data-bs-toggle="tab"
+                            data-bs-target="#monthly" type="button" role="tab" aria-controls="monthly"
+                            aria-selected="false">Monthly</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link text-light border-0" id="projects-tab" data-bs-toggle="tab"
+                            data-bs-target="#projects" type="button" role="tab" aria-controls="projects"
+                            aria-selected="false">AI Projects</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link text-light border-0" id="topics-tab" data-bs-toggle="tab"
+                            data-bs-target="#topics" type="button" role="tab" aria-controls="topics"
+                            aria-selected="false">Interview Topics</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link text-light border-0" id="resources-tab" data-bs-toggle="tab"
+                            data-bs-target="#resources" type="button" role="tab" aria-controls="resources"
+                            aria-selected="false">Learning Resources</button>
+                    </li>
+                </ul>
+
+                <!-- Tab content -->
+                <div class="tab-content text-start" id="roadmapTabContent">
+                    <div class="tab-pane fade show active" id="weekly" role="tabpanel" aria-labelledby="weekly-tab">
+                        <ul class="list-group list-group-flush bg-transparent">
+                            {% for item in roadmap_data.get('weekly', []) %}
+                            <li
+                                class="list-group-item bg-transparent text-secondary border-secondary border-opacity-10 py-2 small">
+                                <i class="bi bi-check-circle-fill text-indigo me-2"
+                                    style="color: var(--golden-batter) !important;"></i> {{ item }}
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <div class="tab-pane fade" id="monthly" role="tabpanel" aria-labelledby="monthly-tab">
+                        <ul class="list-group list-group-flush bg-transparent">
+                            {% for item in roadmap_data.get('monthly', []) %}
+                            <li
+                                class="list-group-item bg-transparent text-secondary border-secondary border-opacity-10 py-2 small">
+                                <i class="bi bi-calendar-event text-teal me-2"
+                                    style="color: var(--olive-harvest) !important;"></i> {{ item }}
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <div class="tab-pane fade" id="projects" role="tabpanel" aria-labelledby="projects-tab">
+                        <ul class="list-group list-group-flush bg-transparent">
+                            {% for item in roadmap_data.get('projects', []) %}
+                            <li
+                                class="list-group-item bg-transparent text-secondary border-secondary border-opacity-10 py-2 small">
+                                <i class="bi bi-code-square text-warning me-2"
+                                    style="color: var(--toasted-caramel) !important;"></i> {{ item }}
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <div class="tab-pane fade" id="topics" role="tabpanel" aria-labelledby="topics-tab">
+                        <ul class="list-group list-group-flush bg-transparent">
+                            {% for item in roadmap_data.get('interview_topics', []) %}
+                            <li
+                                class="list-group-item bg-transparent text-secondary border-secondary border-opacity-10 py-2 small">
+                                <i class="bi bi-chat-square-text text-danger me-2"
+                                    style="color: var(--spiced-wine) !important;"></i> {{ item }}
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <div class="tab-pane fade" id="resources" role="tabpanel" aria-labelledby="resources-tab">
+                        <ul class="list-group list-group-flush bg-transparent">
+                            {% for item in roadmap_data.get('resources', []) %}
+                            <li
+                                class="list-group-item bg-transparent text-secondary border-secondary border-opacity-10 py-2 small">
+                                <i class="bi bi-book-half text-info me-2"
+                                    style="color: var(--golden-batter) !important;"></i> {{ item }}
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+                {% else %}
+                <p class="text-muted small mb-0">Roadmap will be generated once you select your target role path.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Job Recommendations Card -->
+        <div id="recommended-jobs" class="card border-0 shadow-sm mb-4 p-4">
+            <div class="card-body">
+                <h3 class="h5 mb-4 text-light"><i class="bi bi-briefcase-fill text-teal me-2"
+                        style="color: var(--golden-batter) !important;"></i> Recommended Jobs</h3>
+
+                {% if recommended_jobs %}
+                <div class="d-flex flex-column gap-3">
+                    {% for job, score, why_rec in recommended_jobs %}
+                    <div class="p-3 rounded-3 bg-dark border border-secondary border-opacity-10">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div>
+                                <h6 class="fw-bold mb-0 text-light">{{ job.job_role }}</h6>
+                                <span class="text-secondary small">{{ job.company_name }} | {{ job.eligibility }}</span>
+                            </div>
+                            <span class="badge bg-success-subtle text-success-emphasis rounded-pill px-3 py-1.5">{{
+                                score }}% Match</span>
+                        </div>
+                        <p class="text-secondary small mb-2"><strong class="text-teal"
+                                style="color: var(--golden-batter) !important;">Why Recommended:</strong> {{ why_rec }}
+                        </p>
+                        <a href="/job/{{ job.id }}"
+                            class="small text-indigo text-decoration-none d-inline-flex align-items-center"
+                            style="color: var(--golden-batter) !important;">Apply Now <i
+                                class="bi bi-chevron-right ms-1"></i></a>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="text-muted small mb-0">No job recommendations available yet. Upload a resume by applying to an
+                    active job first.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const ctx = document.getElementById('performanceChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'radar',
+            data: {
+                labels: ['Resume Score', 'HR Interview', 'Tech Interview'],
+                datasets: [{
+                    label: 'Mock Score',
+                    data: [{{ ats_avg or 0 }}, {{ hr_avg or 0 }}, {{ tech_avg or 0 }}],
+        backgroundColor: 'rgba(232, 209, 167, 0.2)', // Golden Batter
+        borderColor: 'rgba(232, 209, 167, 0.8)',
+        borderWidth: 2,
+        pointBackgroundColor: 'rgba(232, 209, 167, 1)',
+        pointRadius: 4
+                }]
+            },
+        options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            r: {
+                angleLines: { color: 'rgba(232, 209, 167, 0.1)' },
+                grid: { color: 'rgba(232, 209, 167, 0.1)' },
+                pointLabels: { color: '#9D9167', font: { family: 'Poppins' } },
+                ticks: { color: '#9D9167', backdropColor: 'transparent' },
+                suggestedMin: 0,
+                suggestedMax: 100
+            }
+        },
+        plugins: {
+            legend: { display: false }
+        }
+    }
+        });
+    });
+</script>
+{% endblock %}

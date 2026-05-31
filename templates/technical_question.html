@@ -1,0 +1,55 @@
+{% extends "dashboard_student.html" %}
+
+{% block body %}
+<div class="row justify-content-center">
+    <div class="col-lg-8 col-md-10">
+        <!-- Question Details Header -->
+        <div class="card border-0 shadow-sm p-4 bg-glass mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                    <div>
+                        <h6 class="text-secondary text-uppercase small tracking-wider mb-1"><i class="bi bi-patch-question-fill text-accent me-1"></i> Technical Practice</h6>
+                        <h1 class="h3 fw-bold text-light mb-1">Concept Solution</h1>
+                        <p class="text-secondary mb-0">Topic: <strong>{{ question.topic }}</strong> | Difficulty: 
+                            <span class="badge {% if question.difficulty == 'Easy' %}bg-success-subtle text-success-emphasis{% elif question.difficulty == 'Medium' %}bg-warning-subtle text-warning-emphasis{% else %}bg-danger-subtle text-danger-emphasis{% endif %} rounded-pill px-2.5 py-1 text-uppercase small" style="font-size: 0.7rem;">
+                                {{ question.difficulty }}
+                            </span>
+                        </p>
+                    </div>
+                    <a href="/technical-prep/topic/{{ question.topic }}" class="btn btn-outline-secondary text-light border-secondary px-3 py-2 rounded-3">
+                        <i class="bi bi-arrow-left"></i> Topic Pool
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content Card -->
+        <div class="card border-0 shadow-sm p-4 bg-glass mb-4">
+            <div class="card-body">
+                <!-- Question -->
+                <div class="mb-4">
+                    <h5 class="h6 text-indigo mb-2"><i class="bi bi-question-circle"></i> Question Description</h5>
+                    <div class="p-3 bg-dark border border-secondary border-opacity-10 rounded-3 text-light fw-bold" style="font-size: 1.05rem; line-height: 1.5; font-family: 'Playfair Display', serif;">
+                        {{ question.question }}
+                    </div>
+                </div>
+
+                <!-- Core Solution -->
+                <div class="mb-4">
+                    <h5 class="h6 text-teal mb-2"><i class="bi bi-check-circle"></i> Verified Solution Reference</h5>
+                    <div class="p-3 bg-dark border border-secondary border-opacity-10 rounded-3 text-secondary font-monospace small" style="white-space: pre-wrap; line-height: 1.6;">
+                        {{ question.answer }}
+                    </div>
+                </div>
+
+                <!-- Footer back link -->
+                <div class="border-top pt-3 border-secondary border-opacity-10 text-center">
+                    <a href="/technical-prep/topic/{{ question.topic }}" class="small text-gradient-spiced fw-bold text-decoration-none">
+                        <i class="bi bi-arrow-left-short"></i> Back to {{ question.topic }} Questions
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

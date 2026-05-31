@@ -1,0 +1,158 @@
+{% extends "dashboard_student.html" %}
+
+{% block body %}
+<div class="row justify-content-center">
+    <div class="col-lg-11">
+        <!-- Header -->
+        <div class="card border-0 shadow-sm p-4 bg-glass mb-4">
+            <div class="card-body">
+                <h1 class="h3 fw-bold text-light mb-1">AI Resume Version Comparison</h1>
+                <p class="text-secondary mb-0">Upload two versions of your resume to compare ATS keywords, target job match, and semantic overlaps.</p>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <!-- Form Column -->
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm p-4 bg-glass h-100">
+                    <div class="card-body">
+                        <h5 class="text-light mb-4"><i class="bi bi-file-earmark-diff text-info me-2"></i> Upload Resumes</h5>
+                        <form method="POST" enctype="multipart/form-data">
+                            <div class="mb-3">
+                                <label class="form-label text-muted small fw-medium">Select Target Job Description</label>
+                                <select class="form-select bg-dark border-secondary text-light px-3 py-2" name="job_id" required>
+                                    <option value="" disabled selected>Choose a job opening...</option>
+                                    {% for job in jobs %}
+                                        <option value="{{ job.id }}" {% if comparison and comparison.job.id == job.id %}selected{% endif %}>{{ job.job_role }} - {{ job.company_name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label text-muted small fw-medium">Upload Resume V1 (Base PDF)</label>
+                                <input type="file" name="resume_v1" class="form-control text-light" accept=".pdf" required>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label text-muted small fw-medium">Upload Resume V2 (Optimized PDF)</label>
+                                <input type="file" name="resume_v2" class="form-control text-light" accept=".pdf" required>
+                            </div>
+
+                            <button type="submit" class="btn btn-teal w-100 py-2.5 rounded-3">
+                                Compare Versions <i class="bi bi-cpu-fill ms-1"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Report Column -->
+            <div class="col-lg-8">
+                {% if comparison %}
+                <div class="card border-0 shadow-sm p-4 bg-glass h-100">
+                    <div class="card-body">
+                        <h5 class="text-light mb-4"><i class="bi bi-bar-chart-fill text-warning me-2"></i> Comparative Analysis Report</h5>
+
+                        <!-- Stats Row -->
+                        <div class="row g-3 mb-4">
+                            <div class="col-4">
+                                <div class="p-3 bg-dark border border-secondary border-opacity-10 rounded-3 text-center">
+                                    <span class="text-secondary small d-block mb-1">Resume V1 Score</span>
+                                    <span class="h3 fw-bold text-muted">{{ comparison.score_v1 }}%</span>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="p-3 bg-dark border border-secondary border-opacity-10 rounded-3 text-center">
+                                    <span class="text-secondary small d-block mb-1">Resume V2 Score</span>
+                                    <span class="h3 fw-bold text-success">{{ comparison.score_v2 }}%</span>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="p-3 bg-dark border border-secondary border-opacity-10 rounded-3 text-center">
+                                    <span class="text-secondary small d-block mb-1">Score Difference</span>
+                                    <span class="h3 fw-bold {% if comparison.score_diff > 0 %}text-success{% elif comparison.score_diff < 0 %}text-danger{% else %}text-secondary{% endif %}">
+                                        {% if comparison.score_diff > 0 %}+{% endif %}{{ comparison.score_diff }}%
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Semantic Similarity Badge -->
+                        <div class="p-3 rounded-3 bg-dark border border-secondary border-opacity-10 mb-4 d-flex justify-content-between align-items-center">
+                            <div>
+                                <span class="text-light small fw-bold d-block">Resumes Semantic Similarity</span>
+                                <span class="text-secondary small">Degree of structural text alteration between V1 and V2.</span>
+                            </div>
+                            <span class="badge bg-indigo text-light rounded-pill px-3 py-2 fs-6">{{ comparison.similarity }}% Match</span>
+                        </div>
+
+                        <!-- Skill Differences -->
+                        <div class="mb-4">
+                            <h6 class="text-light fw-bold mb-3"><i class="bi bi-tags-fill text-accent me-2"></i> Skill Changes (V1 vs V2)</h6>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="p-3 bg-dark bg-opacity-40 rounded-3 border border-secondary border-opacity-10 h-100">
+                                        <span class="text-success small fw-bold d-block mb-2"><i class="bi bi-plus-circle-fill me-1"></i> Added Skills ({{ comparison.new_skills|length }})</span>
+                                        <div class="d-flex flex-wrap gap-1">
+                                            {% for skill in comparison.new_skills %}
+                                                <span class="badge bg-success-subtle text-success-emphasis rounded-pill px-2.5 py-1.5 small">{{ skill }}</span>
+                                            {% else %}
+                                                <span class="text-muted small">No new skills detected.</span>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="p-3 bg-dark bg-opacity-40 rounded-3 border border-secondary border-opacity-10 h-100">
+                                        <span class="text-danger small fw-bold d-block mb-2"><i class="bi bi-dash-circle-fill me-1"></i> Removed Skills ({{ comparison.removed_skills|length }})</span>
+                                        <div class="d-flex flex-wrap gap-1">
+                                            {% for skill in comparison.removed_skills %}
+                                                <span class="badge bg-danger-subtle text-danger-emphasis rounded-pill px-2.5 py-1.5 small">{{ skill }}</span>
+                                            {% else %}
+                                                <span class="text-muted small">No skills removed.</span>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Remaining Gaps -->
+                        <div class="mb-4">
+                            <div class="p-3 bg-dark bg-opacity-40 rounded-3 border border-secondary border-opacity-10">
+                                <span class="text-warning small fw-bold d-block mb-2"><i class="bi bi-exclamation-triangle-fill me-1"></i> Remaining Skill Gaps for Target Job ({{ comparison.still_missing|length }})</span>
+                                <div class="d-flex flex-wrap gap-1">
+                                    {% for skill in comparison.still_missing %}
+                                        <span class="badge bg-warning-subtle text-warning-emphasis rounded-pill px-2.5 py-1.5 small">{{ skill }}</span>
+                                    {% else %}
+                                        <span class="badge bg-success-subtle text-success-emphasis rounded-pill px-2.5 py-1.5 small">No missing skills remaining!</span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Report Summary Insights -->
+                        <div class="p-3 rounded-3 bg-indigo bg-opacity-10 border border-indigo border-opacity-20">
+                            <h6 class="text-indigo fw-bold mb-2"><i class="bi bi-info-circle-fill me-1"></i> AI Improvement Recommendations</h6>
+                            <ul class="mb-0 ps-3 small text-secondary">
+                                {% for insight in comparison.insights %}
+                                    <li class="mb-1 text-light">{{ insight }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+                <div class="card border-0 p-5 text-center bg-glass h-100 justify-content-center">
+                    <div class="card-body py-5">
+                        <i class="bi bi-file-earmark-diff text-muted display-3 mb-3"></i>
+                        <h4 class="text-light">Awaiting Resume Comparison</h4>
+                        <p class="text-secondary small mb-0">Select a target job and upload Resume V1 and Resume V2 to generate the comparative report.</p>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

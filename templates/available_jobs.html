@@ -1,0 +1,122 @@
+{% extends "dashboard_student.html" %}
+
+{% block body %}
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <!-- Header Card -->
+        <div class="card border-0 shadow-sm p-4 bg-glass mb-4">
+            <div class="card-body">
+                <h1 class="h3 fw-bold text-light mb-1">Explore Openings</h1>
+                <p class="text-secondary mb-0">Browse job matches, run local ATS screenings, and submit applications</p>
+            </div>
+        </div>
+
+        <!-- Search & Filter Layout -->
+        <div class="card border-0 shadow-sm p-4 bg-glass mb-4">
+            <div class="card-body py-1">
+                <div class="row g-3">
+                    <div class="col-md-8">
+                        <div class="input-group">
+                            <span class="input-group-text bg-dark border-secondary text-secondary"><i class="bi bi-search"></i></span>
+                            <input type="text" id="jobSearch" class="form-control text-light" placeholder="Search by job title or company name...">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <select id="eligibilityFilter" class="form-select bg-dark border-secondary text-light">
+                            <option value="">All Eligibility Levels</option>
+                            <option value="fresher">Fresher</option>
+                            <option value="experienced">Experienced</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Jobs List Grid -->
+        {% if jobs %}
+            <div class="row g-4 mb-5" id="jobsContainer">
+                {% for job in jobs %}
+                    <div class="col-md-6 col-12 job-item-card" data-title="{{ job.job_role.lower() }}" data-company="{{ job.company_name.lower() }}" data-eligibility="{{ job.eligibility.lower() }}">
+                        <div class="card border-0 shadow-sm h-100 p-4 bg-glass">
+                            <div class="card-body d-flex flex-column justify-content-between h-100">
+                                <div>
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <h3 class="h5 fw-bold text-light mb-0">{{ job.job_role }}</h3>
+                                        <span class="badge bg-indigo-subtle text-indigo rounded-pill px-2.5 py-1.5 small">{{ job.eligibility }}</span>
+                                    </div>
+                                    <h6 class="text-secondary fw-semibold small mb-3"><i class="bi bi-building me-1"></i> {{ job.company_name }}</h6>
+                                    
+                                    <div class="mb-3">
+                                        <span class="text-muted small fw-bold d-block mb-1">Skills Required:</span>
+                                        <div class="d-flex flex-wrap gap-1.5">
+                                            {% for skill in job.skills_required.split(',') %}
+                                                <span class="badge bg-success-subtle text-success-emphasis rounded-pill px-2.5 py-1">{{ skill.strip().title() }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-4">
+                                        <span class="text-muted small fw-bold d-block mb-1">Job Description Preview:</span>
+                                        <p class="text-secondary small mb-0" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis;">
+                                            {{ job.job_description }}
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div class="d-flex gap-2 border-top pt-3 border-secondary border-opacity-10 mt-auto">
+                                    <a href="/job/{{ job.id }}" class="btn btn-outline-secondary btn-sm py-2 px-3 rounded-3 text-light">
+                                        <i class="bi bi-info-circle"></i> Details
+                                    </a>
+                                    <a href="/check_ats/{{ job.id }}" class="btn btn-teal btn-sm py-2 px-3 rounded-3 flex-grow-1">
+                                        Check Match & Apply <i class="bi bi-chevron-right ms-1"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <!-- Client-side Searching Script -->
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    const searchInput = document.getElementById('jobSearch');
+                    const eligibilitySelect = document.getElementById('eligibilityFilter');
+                    const jobCards = document.querySelectorAll('.job-item-card');
+
+                    function filterJobs() {
+                        const query = searchInput.value.toLowerCase();
+                        const filterVal = eligibilitySelect.value.toLowerCase();
+
+                        jobCards.forEach(card => {
+                            const title = card.getAttribute('data-title');
+                            const company = card.getAttribute('data-company');
+                            const eligibility = card.getAttribute('data-eligibility');
+
+                            const matchesSearch = title.includes(query) || company.includes(query);
+                            const matchesFilter = filterVal === "" || eligibility.includes(filterVal);
+
+                            if (matchesSearch && matchesFilter) {
+                                card.style.display = "block";
+                            } else {
+                                card.style.display = "none";
+                            }
+                        });
+                    }
+
+                    searchInput.addEventListener('input', filterJobs);
+                    eligibilitySelect.addEventListener('change', filterJobs);
+                });
+            </script>
+        {% else %}
+            <div class="card border-0 p-5 text-center bg-glass">
+                <div class="card-body py-5">
+                    <i class="bi bi-briefcase text-muted display-3 mb-3"></i>
+                    <h4 class="text-light">No jobs available right now</h4>
+                    <p class="text-secondary small mb-0">Check back later for active job openings posted by recruiters.</p>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

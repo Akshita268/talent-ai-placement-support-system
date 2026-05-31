@@ -1,0 +1,128 @@
+{% extends "dashboard_student.html" %}
+
+{% block body %}
+<div class="row justify-content-center">
+    <div class="col-lg-8 col-md-10">
+        <!-- Header / Back Button -->
+        <div class="card border-0 shadow-sm p-4 bg-glass mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                    <div>
+                        <h6 class="text-secondary text-uppercase small tracking-wider mb-1"><i class="bi bi-briefcase text-accent me-1"></i> Job Details</h6>
+                        <h1 class="h3 fw-bold text-light mb-1">{{ job.job_role }}</h1>
+                        <p class="text-secondary mb-0">Offered by <strong>{{ job.company_name }}</strong></p>
+                    </div>
+                    <a href="/jobs" class="btn btn-outline-secondary text-light border-secondary px-3 py-2 rounded-3">
+                        <i class="bi bi-arrow-left"></i> All Jobs
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Details Card -->
+        <div class="card border-0 shadow-sm p-4 bg-glass mb-4">
+            <div class="card-body">
+                <!-- Metadata Grid -->
+                <div class="row g-3 mb-4">
+                    <div class="col-6">
+                        <div class="p-3 bg-dark rounded-3 border border-secondary border-opacity-10">
+                            <span class="text-secondary small d-block mb-1"><i class="bi bi-mortarboard me-1 text-accent"></i> Eligibility Criteria</span>
+                            <span class="fw-bold text-light">{{ job.eligibility }}</span>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-3 bg-dark rounded-3 border border-secondary border-opacity-10">
+                            <span class="text-secondary small d-block mb-1"><i class="bi bi-tags me-1 text-accent"></i> Required Core Skills</span>
+                            <div class="d-flex flex-wrap gap-1 mt-1">
+                                {% for skill in job.skills_required.split(',') %}
+                                    <span class="badge bg-indigo-subtle text-indigo rounded-pill px-2 py-1 small">{{ skill.strip().title() }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Job Description Section -->
+                <div class="mb-4">
+                    <h5 class="h6 text-light mb-2"><i class="bi bi-file-earmark-text text-accent me-1"></i> Detailed Job Description</h5>
+                    <div class="p-3 bg-dark border border-secondary border-opacity-10 rounded-3 text-secondary" style="white-space: pre-wrap; font-size: 0.95rem; line-height: 1.6;">
+                        {{ job.job_description }}
+                    </div>
+                </div>
+
+                {% if job.jd_pdf_filename %}
+                    <div class="mb-4">
+                        <h5 class="h6 text-light mb-2"><i class="bi bi-file-earmark-pdf text-danger me-1"></i> Original Job Description PDF</h5>
+                        <div class="p-3 bg-dark border border-secondary border-opacity-10 rounded-3 d-flex align-items-center justify-content-between">
+                            <span class="text-secondary small"><i class="bi bi-filetype-pdf text-danger fs-5 me-2"></i> {{ job.jd_pdf_filename }}</span>
+                            <a href="/uploads/job_descriptions/{{ job.jd_pdf_filename }}" class="btn btn-sm btn-outline-secondary text-light border-secondary" target="_blank">
+                                <i class="bi bi-download"></i> View PDF
+                            </a>
+                        </div>
+                    </div>
+                {% endif %}
+
+                {% if skill_gap %}
+                <!-- AI Skill Gap Analysis Section -->
+                <div class="mb-4 p-4 rounded-3 border border-secondary border-opacity-20 bg-dark bg-opacity-40">
+                    <h5 class="h6 text-info mb-3"><i class="bi bi-lightning-charge-fill me-1"></i> AI Skill Gap Analysis</h5>
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <span class="text-secondary small d-block mb-1.5 fw-bold text-success"><i class="bi bi-patch-check-fill me-1"></i> Matched Skills</span>
+                            <div class="d-flex flex-wrap gap-1.5">
+                                {% if skill_gap.matched %}
+                                    {% for skill in skill_gap.matched %}
+                                        <span class="badge bg-success-subtle text-success-emphasis rounded-pill px-2.5 py-1.5 small">{{ skill }}</span>
+                                    {% endfor %}
+                                {% else %}
+                                    <span class="text-muted small">No matched skills.</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <span class="text-secondary small d-block mb-1.5 fw-bold text-danger"><i class="bi bi-exclamation-triangle-fill me-1"></i> Missing Skills</span>
+                            <div class="d-flex flex-wrap gap-1.5">
+                                {% if skill_gap.missing %}
+                                    {% for skill in skill_gap.missing %}
+                                        <span class="badge bg-danger-subtle text-danger-emphasis rounded-pill px-2.5 py-1.5 small">{{ skill }}</span>
+                                    {% endfor %}
+                                {% else %}
+                                    <span class="badge bg-success-subtle text-success-emphasis rounded-pill px-2.5 py-1.5 small">100% Skills Matched!</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% if skill_gap.priority %}
+                    <div class="mb-3">
+                        <span class="text-secondary small d-block mb-1 fw-bold text-warning"><i class="bi bi-star-fill me-1"></i> Priority Focus Skills</span>
+                        <div class="d-flex flex-wrap gap-1.5">
+                            {% for skill in skill_gap.priority %}
+                                <span class="badge bg-warning-subtle text-warning-emphasis rounded-pill px-2.5 py-1.5 small">{{ skill }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% if skill_gap.suggestions %}
+                    <div class="p-3 bg-light-subtle rounded-3 border border-secondary border-opacity-10 mb-0">
+                        <h6 class="text-light small fw-bold mb-1.5"><i class="bi bi-rocket-takeoff-fill text-info me-1"></i> Learning Suggestions</h6>
+                        <ul class="list-unstyled mb-0 small text-secondary">
+                            {% for suggestion in skill_gap.suggestions %}
+                            <li class="mb-1 d-flex align-items-start gap-1"><i class="bi bi-arrow-right-short text-info mt-0.5"></i> <span>{{ suggestion }}</span></li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endif %}
+
+                <!-- Action Button -->
+                <div class="border-top pt-4 border-secondary border-opacity-10">
+                    <a href="/check_ats/{{ job.id }}" class="btn btn-teal w-100 py-2.5 rounded-3 text-center">
+                        Proceed to ATS Verification & Apply <i class="bi bi-arrow-right-short ms-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,109 @@
+{% extends "dashboard_student.html" %}
+
+{% block body %}
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <!-- Profile Header Card -->
+        <div class="card border-0 shadow-sm p-4 bg-glass mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                    <div>
+                        <h1 class="h3 fw-bold text-light mb-1">Candidate Profile</h1>
+                        <p class="text-secondary mb-0">View your placement prep stats and update your account details</p>
+                    </div>
+                    <a href="/student/dashboard" class="btn btn-outline-secondary text-light border-secondary px-3 py-2 rounded-3">
+                        <i class="bi bi-arrow-left"></i> Back To Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <!-- Left Side: Profile Edit Form -->
+            <div class="col-lg-6">
+                <div class="card border-0 shadow-sm p-4 bg-glass h-100">
+                    <div class="card-body">
+                        <div class="text-center mb-4">
+                            <!-- Initials Avatar -->
+                            <div class="d-flex align-items-center justify-content-center rounded-circle mx-auto mb-3 shadow" 
+                                 style="width: 100px; height: 100px; font-size: 2.2rem; font-family: 'Playfair Display', serif; background-color: var(--accent); color: var(--text-light); border: 3px double var(--border-color);">
+                                {{ student.full_name[:2].upper() }}
+                            </div>
+                            <h4 class="h5 text-light mb-1">{{ student.full_name }}</h4>
+                            <span class="badge bg-indigo-subtle text-indigo rounded-pill px-3 py-1">Candidate</span>
+                        </div>
+
+                        <form method="POST" action="/student/profile">
+                            <div class="mb-3">
+                                <label class="form-label text-muted small fw-medium">Full Name</label>
+                                <input type="text" name="full_name" class="form-control text-light px-3 py-2" 
+                                       value="{{ student.full_name }}" required>
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label text-muted small fw-medium">Email Address</label>
+                                <input type="email" name="email" class="form-control text-light px-3 py-2" 
+                                       value="{{ student.email }}" required>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-teal w-100 py-2.5 rounded-3">
+                                Save Profile Changes <i class="bi bi-check-circle ms-1"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side: Candidate Statistics -->
+            <div class="col-lg-6">
+                <div class="card border-0 shadow-sm p-4 bg-glass h-100">
+                    <div class="card-body">
+                        <h4 class="h5 text-light mb-4"><i class="bi bi-bar-chart-line text-accent me-2"></i> Placement Statistics</h4>
+                        
+                        <div class="row g-3">
+                            <!-- Stat 1: Applications -->
+                            <div class="col-6">
+                                <div class="p-3 bg-dark border border-secondary border-opacity-10 rounded-3 text-center">
+                                    <i class="bi bi-file-earmark-person fs-3 text-gradient mb-1 d-block"></i>
+                                    <span class="text-secondary small d-block mb-1">Applications</span>
+                                    <span class="h4 fw-bold text-light">{{ total_apps }}</span>
+                                </div>
+                            </div>
+                            <!-- Stat 2: ATS Average -->
+                            <div class="col-6">
+                                <div class="p-3 bg-dark border border-secondary border-opacity-10 rounded-3 text-center">
+                                    <i class="bi bi-cpu fs-3 text-gradient mb-1 d-block"></i>
+                                    <span class="text-secondary small d-block mb-1">ATS Average</span>
+                                    <span class="h4 fw-bold text-light">{{ ats_avg }}%</span>
+                                </div>
+                            </div>
+                            <!-- Stat 3: HR Prep -->
+                            <div class="col-6">
+                                <div class="p-3 bg-dark border border-secondary border-opacity-10 rounded-3 text-center">
+                                    <i class="bi bi-chat-left-text fs-3 text-gradient mb-1 d-block"></i>
+                                    <span class="text-secondary small d-block mb-1">HR Avg Score</span>
+                                    <span class="h4 fw-bold text-light">{{ hr_avg }}%</span>
+                                </div>
+                            </div>
+                            <!-- Stat 4: Technical Mock -->
+                            <div class="col-6">
+                                <div class="p-3 bg-dark border border-secondary border-opacity-10 rounded-3 text-center">
+                                    <i class="bi bi-terminal fs-3 text-gradient mb-1 d-block"></i>
+                                    <span class="text-secondary small d-block mb-1">Tech Avg Score</span>
+                                    <span class="h4 fw-bold text-light">{{ tech_avg }}%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Info Card -->
+                        <div class="p-3 rounded-3 bg-indigo bg-opacity-10 border border-indigo border-opacity-15 mt-4">
+                            <h6 class="text-indigo small fw-bold mb-1"><i class="bi bi-info-circle-fill me-1"></i> Dashboard Integration</h6>
+                            <p class="text-secondary small mb-0">Your readiness scores are computed locally using your mock evaluation history. Take more interviews to update stats.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

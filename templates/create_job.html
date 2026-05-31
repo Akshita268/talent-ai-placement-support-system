@@ -1,0 +1,211 @@
+{% extends "dashboard_recruiter.html" %}
+
+{% block body %}
+<div class="row justify-content-center">
+    <div class="col-lg-8 col-md-10">
+        <!-- Header Card -->
+        <div class="card border-0 shadow-sm p-4 bg-glass mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                    <div>
+                        <h1 class="h3 fw-bold text-light mb-1">Create Job Posting</h1>
+                        <p class="text-secondary mb-0">Publish openings and let AI analyze incoming resume matches</p>
+                    </div>
+                    <a href="/recruiter/jobs" class="btn btn-outline-secondary text-light border-secondary px-3 py-2 rounded-3">
+                        <i class="bi bi-arrow-left"></i> Manage Jobs
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Form Card -->
+        <div class="card border-0 shadow-sm p-4 bg-glass">
+            <div class="card-body">
+                <form method="POST" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label class="form-label text-muted small fw-medium">Company Name</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-dark border-secondary text-secondary"><i class="bi bi-building"></i></span>
+                            <input type="text" name="company_name" id="company_name" class="form-control text-light" placeholder="e.g. Google" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label text-muted small fw-medium">Job Role / Title</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-dark border-secondary text-secondary"><i class="bi bi-briefcase"></i></span>
+                            <input type="text" name="job_role" id="job_role" class="form-control text-light" placeholder="e.g. ML Engineer" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label text-muted small fw-medium">Eligibility Criteria</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-dark border-secondary text-secondary"><i class="bi bi-mortarboard"></i></span>
+                            <input type="text" name="eligibility" id="eligibility" class="form-control text-light" placeholder="e.g. B.Tech CSE / 70% Cutoff" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label text-muted small fw-medium">Skills Required (Comma-separated)</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-dark border-secondary text-secondary"><i class="bi bi-tags"></i></span>
+                            <input type="text" name="skills_required" id="skills_required" class="form-control text-light" placeholder="e.g. python, pytorch, sql, docker" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label text-muted small fw-medium">Detailed Job Description</label>
+                        <textarea name="job_description" id="job_description" class="form-control text-light" rows="8" placeholder="Outline the requirements, responsibilities, projects, and work environment..." required></textarea>
+                        <div id="jd_assistant_container" class="d-flex flex-wrap gap-2 mt-2">
+                            <button type="button" id="btn_generate_jd" class="btn btn-sm btn-outline-info" onclick="callJDAssistant('generate')">
+                                <span id="spin_generate" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                                Generate AI JD <i class="bi bi-magic ms-1"></i>
+                            </button>
+                            <button type="button" id="btn_improve_jd" class="btn btn-sm btn-outline-warning" onclick="callJDAssistant('improve')">
+                                <span id="spin_improve" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                                Improve JD <i class="bi bi-pencil-square ms-1"></i>
+                            </button>
+                            <button type="button" id="btn_enhance_structure" class="btn btn-sm btn-outline-success" onclick="callJDAssistant('enhance')">
+                                <span id="spin_enhance" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                                Enhance Structure <i class="bi bi-grid-fill ms-1"></i>
+                            </button>
+                            <button type="button" id="btn_make_professional" class="btn btn-sm btn-outline-primary" onclick="callJDAssistant('professional')">
+                                <span id="spin_professional" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                                Professional Rewrite <i class="bi bi-briefcase-fill ms-1"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label text-muted small fw-medium">Upload JD PDF (Optional)</label>
+                        <input type="file" name="jd_pdf" class="form-control text-light" accept=".pdf">
+                        <div class="form-text text-secondary mt-1" style="font-size: 0.75rem;">Uploading a PDF description allows the embedding engine to perform more granular semantic evaluations. Only PDF allowed.</div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 py-2.5 rounded-3">
+                        Publish Opening <i class="bi bi-send ms-1"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function callJDAssistant(action) {
+    const role = document.getElementById('job_role').value.trim();
+    const skills = document.getElementById('skills_required').value.trim();
+    const eligibility = document.getElementById('eligibility').value.trim();
+    const currentText = document.getElementById('job_description').value.trim();
+    
+    // Check validation based on action
+    if (action === 'generate') {
+        if (!role || !skills || !eligibility) {
+            Swal.fire({
+                title: 'Missing Fields',
+                text: 'Please fill Job Role / Title, Skills Required, and Eligibility Criteria to generate a complete JD.',
+                icon: 'warning',
+                confirmButtonColor: '#743014',
+                background: '#2C1C11',
+                color: '#E8D1A7'
+            });
+            return;
+        }
+    } else {
+        // improve, enhance, professional require text
+        if (!currentText) {
+            Swal.fire({
+                title: 'Empty Job Description',
+                text: 'Please enter some text in the Detailed Job Description first to use this AI assistant feature.',
+                icon: 'warning',
+                confirmButtonColor: '#743014',
+                background: '#2C1C11',
+                color: '#E8D1A7'
+            });
+            return;
+        }
+    }
+    
+    // If generating and description is not empty, confirm overwrite
+    if (action === 'generate' && currentText) {
+        Swal.fire({
+            title: 'Overwrite Description?',
+            text: 'This will replace your current job description text. Do you want to proceed?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, overwrite',
+            cancelButtonText: 'Cancel',
+            confirmButtonColor: '#743014',
+            cancelButtonColor: '#4A3E3D',
+            background: '#2C1C11',
+            color: '#E8D1A7'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                executeJDCall(action, role, skills, eligibility, currentText);
+            }
+        });
+    } else {
+        executeJDCall(action, role, skills, eligibility, currentText);
+    }
+}
+
+function executeJDCall(action, role, skills, eligibility, text) {
+    let btnId = '';
+    let spinId = '';
+    if (action === 'generate') { btnId = 'btn_generate_jd'; spinId = 'spin_generate'; }
+    else if (action === 'improve') { btnId = 'btn_improve_jd'; spinId = 'spin_improve'; }
+    else if (action === 'enhance') { btnId = 'btn_enhance_structure'; spinId = 'spin_enhance'; }
+    else if (action === 'professional') { btnId = 'btn_make_professional'; spinId = 'spin_professional'; }
+    
+    const btn = document.getElementById(btnId);
+    const spinner = document.getElementById(spinId);
+    
+    // Disable all buttons in the assistant container to prevent concurrent modifications
+    const allButtons = document.querySelectorAll('#jd_assistant_container button');
+    allButtons.forEach(b => b.disabled = true);
+    if (spinner) spinner.classList.remove('d-none');
+    
+    fetch('/recruiter/generate-jd', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ action, role, skills, eligibility, text })
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(err => { throw new Error(err.error || 'Server error'); });
+        }
+        return response.json();
+    })
+    .then(data => {
+        document.getElementById('job_description').value = data.job_description;
+        Swal.fire({
+            title: 'Success',
+            text: 'Job Description updated successfully!',
+            icon: 'success',
+            confirmButtonColor: '#743014',
+            background: '#2C1C11',
+            color: '#E8D1A7'
+        });
+    })
+    .catch(error => {
+        Swal.fire({
+            title: 'Error',
+            text: error.message,
+            icon: 'error',
+            confirmButtonColor: '#743014',
+            background: '#2C1C11',
+            color: '#E8D1A7'
+        });
+    })
+    .finally(() => {
+        allButtons.forEach(b => b.disabled = false);
+        if (spinner) spinner.classList.add('d-none');
+    });
+}
+</script>
+{% block scripts %}
+{% endblock %}
+{% endblock %}

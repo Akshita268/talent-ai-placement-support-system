@@ -1,0 +1,59 @@
+{% extends "dashboard_student.html" %}
+
+{% block body %}
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <!-- Header Card -->
+        <div class="card border-0 shadow-sm p-4 bg-glass mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                    <div>
+                        <h1 class="h3 fw-bold text-light mb-1">HR Mock History</h1>
+                        <p class="text-secondary mb-0">Review past behavioral sessions and track communication growth</p>
+                    </div>
+                    <a href="/interview" class="btn btn-indigo rounded-3 py-2.5 fw-bold">
+                        <i class="bi bi-plus-circle"></i> Start New Mock
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- History Sessions List -->
+        {% if interviews %}
+            <div class="d-flex flex-column gap-3 mb-5">
+                {% for session in interviews %}
+                    <div class="p-4 rounded-3 bg-glass border border-secondary border-opacity-10 d-flex flex-wrap justify-content-between align-items-center gap-3">
+                        <div>
+                            <h5 class="h6 text-indigo fw-bold mb-1"><i class="bi bi-chat-dots-fill"></i> {{ session.job_role }}</h5>
+                            <div class="text-secondary small">
+                                <span class="me-3"><i class="bi bi-person-badge"></i> {{ session.experience_level }}</span>
+                                <span><i class="bi bi-calendar3"></i> {{ session.created_at.strftime('%Y-%m-%d %H:%M') if session.created_at else 'Unknown Date' }}</span>
+                            </div>
+                        </div>
+                        <div class="text-end">
+                            <span class="badge bg-indigo-subtle text-indigo rounded-pill px-4 py-2 fs-6">Score: {{ session.total_score | int }}%</span>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="card border-0 p-5 text-center bg-glass mb-5">
+                <div class="card-body py-5">
+                    <i class="bi bi-clock-history text-muted display-3 mb-3"></i>
+                    <h4 class="text-light">No mock sessions yet</h4>
+                    <p class="text-secondary small mb-4">Take your first HR behavioral mock interview to see stats here.</p>
+                    <a href="/interview" class="btn btn-indigo px-4 py-2.5 rounded-3 fw-bold">
+                        Start First Session
+                    </a>
+                </div>
+            </div>
+        {% endif %}
+
+        <div class="text-center mb-5">
+            <a href="/student/dashboard" class="btn btn-outline-secondary text-light border-secondary px-4 py-2 rounded-pill">
+                Back To Dashboard
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

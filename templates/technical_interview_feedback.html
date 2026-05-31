@@ -1,0 +1,71 @@
+{% extends "dashboard_student.html" %}
+
+{% block body %}
+<div class="row justify-content-center">
+    <div class="col-lg-9 col-md-11">
+        <!-- Header Card -->
+        <div class="card border-0 shadow-sm p-4 bg-glass mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                    <div>
+                        <h6 class="text-secondary text-uppercase small tracking-wider mb-1"><i class="bi bi-cpu-fill text-indigo me-1"></i> Placement Mock Evaluation</h6>
+                        <h1 class="h3 fw-bold text-light mb-0">Technical Evaluation Result</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Question & Student Answer Card -->
+        <div class="card border-0 shadow-sm p-4 bg-glass mb-4">
+            <div class="card-body text-start">
+                <div class="mb-4">
+                    <label class="text-secondary small fw-bold d-block mb-1.5"><i class="bi bi-question-circle text-indigo me-1"></i> Question</label>
+                    <div class="text-light fw-medium p-3 rounded bg-dark border border-secondary border-opacity-10 fs-6">
+                        {{ question }}
+                    </div>
+                </div>
+
+                <div class="mb-0">
+                    <label class="text-secondary small fw-bold d-block mb-1.5"><i class="bi bi-chat-left-text text-teal me-1"></i> Your Answer</label>
+                    <div class="text-secondary p-3 rounded bg-dark border border-secondary border-opacity-10 small" style="white-space: pre-wrap; line-height: 1.6;">
+                        {{ student_answer }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Evaluation Results Card -->
+        <div class="card border-0 shadow-sm p-4 bg-glass mb-4">
+            <div class="card-body text-start">
+                <div class="row g-4 align-items-center">
+                    <!-- AI Score Indicator -->
+                    <div class="col-md-4 text-center border-end border-secondary border-opacity-10 pe-md-4">
+                        <h6 class="text-secondary text-uppercase small fw-bold mb-3">AI Score</h6>
+                        <div class="d-inline-flex align-items-center justify-content-center bg-dark rounded-circle border border-secondary border-opacity-20 shadow" style="width: 120px; height: 120px;">
+                            <div class="text-center">
+                                <span class="display-6 fw-extrabold text-gradient-teal d-block">{{ score | int }}%</span>
+                                <span class="text-muted small">Match</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Detailed Critique -->
+                    <div class="col-md-8 ps-md-4">
+                        <h5 class="h6 text-indigo mb-2.5 fw-bold"><i class="bi bi-shield-check me-1"></i> Detailed Critique</h5>
+                        <p class="text-secondary small p-3 bg-dark border border-secondary border-opacity-10 rounded-3 mb-0" style="line-height: 1.6;">
+                            {{ detailed_critique }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Button -->
+        <div class="text-center mb-5">
+            <a href="/technical_question" class="btn btn-indigo px-5 py-3 rounded-3 shadow fw-bold w-100">
+                Continue Interview <i class="bi bi-arrow-right-short ms-1.5 fs-5"></i>
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,54 @@
+{% extends "dashboard_student.html" %}
+
+{% block body %}
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <div class="card border-0 shadow-sm p-4 bg-glass mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                    <div>
+                        <h1 class="h3 fw-bold text-light mb-1">Technical Mock Interview History</h1>
+                        <p class="text-secondary mb-0">Track your progress and conceptual scores over time</p>
+                    </div>
+                    <a href="/technical_interview" class="btn btn-indigo rounded-3">
+                        <i class="bi bi-plus-circle"></i> Start New Mock
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        {% if sessions %}
+        <div class="d-flex flex-column gap-3 mb-5">
+            {% for s in sessions %}
+            <div class="p-4 rounded-3 bg-glass border border-secondary border-opacity-10 d-flex flex-wrap justify-content-between align-items-center gap-3">
+                <div>
+                    <h5 class="h6 text-indigo fw-bold mb-1">{{ s.domain }}</h5>
+                    <div class="text-secondary small">
+                        <span class="me-3"><i class="bi bi-bar-chart-steps"></i> {{ s.difficulty }}</span>
+                        <span><i class="bi bi-calendar3"></i> {{ s.created_at.strftime('%Y-%m-%d %H:%M') if s.created_at else 'Unknown Date' }}</span>
+                    </div>
+                </div>
+                <div class="text-end">
+                    <span class="badge bg-indigo-subtle text-indigo rounded-pill px-4 py-2 fs-6">Score: {{ s.total_score }}%</span>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="card border-0 p-5 text-center bg-glass">
+            <div class="card-body">
+                <i class="bi bi-clock-history text-muted display-4 mb-3"></i>
+                <h4 class="text-light">No mock sessions yet</h4>
+                <p class="text-secondary small mb-0">Launch your first mock session from the dashboard or mock landing page.</p>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="text-center mb-5">
+            <a href="/student/dashboard" class="btn btn-outline-secondary text-light border-secondary px-4 py-2 rounded-pill">
+                Back To Dashboard
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

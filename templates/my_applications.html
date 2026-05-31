@@ -1,0 +1,96 @@
+{% extends "dashboard_student.html" %}
+
+{% block body %}
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <!-- Header Card -->
+        <div class="card border-0 shadow-sm p-4 bg-glass mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                    <div>
+                        <h1 class="h3 fw-bold text-light mb-1">My Applications</h1>
+                        <p class="text-secondary mb-0">Track statuses, evaluation feedbacks, and alignment metrics</p>
+                    </div>
+                    <a href="/jobs" class="btn btn-teal py-2.5 rounded-3">
+                        <i class="bi bi-search"></i> Explore Jobs
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Table Card -->
+        {% if applications %}
+            <div class="table-responsive mb-5">
+                <table class="table-custom">
+                    <thead>
+                        <tr>
+                            <th>Company</th>
+                            <th>Job Role</th>
+                            <th>Status</th>
+                            <th>ATS Score</th>
+                            <th>AI Feedback Summary</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for application in applications %}
+                            <tr>
+                                <td class="fw-bold text-light">
+                                    <i class="bi bi-building me-1.5 text-accent"></i>
+                                    {% if application.job %}
+                                        {{ application.job.company_name }}
+                                    {% else %}
+                                        Deleted Job
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if application.job %}
+                                        {{ application.job.job_role }}
+                                    {% else %}
+                                        N/A
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <span class="badge {% if application.status == 'Hired' %}bg-success-subtle text-success-emphasis{% elif application.status == 'Interviewed' %}bg-indigo-subtle text-indigo-emphasis{% elif application.status == 'Shortlisted' %}bg-warning-subtle text-warning-emphasis{% else %}bg-secondary-subtle text-secondary-emphasis{% endif %} rounded-pill px-3 py-1.5 small">
+                                        {{ application.status }}
+                                    </span>
+                                </td>
+                                <td class="fw-bold fs-6">
+                                    {{ application.ats_score | int }}%
+                                </td>
+                                <td class="text-secondary small" style="max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="{{ application.feedback }}">
+                                    {{ application.feedback }}
+                                </td>
+                                <td>
+                                    {% if application.status in ['Shortlisted', 'Selected'] %}
+                                        {% if application.contact_details %}
+                                            <span class="badge bg-success-subtle text-success-emphasis rounded-pill px-3 py-1.5 small"><i class="bi bi-check-circle-fill me-1"></i> Details Submitted</span>
+                                        {% else %}
+                                            <a href="/student/application/{{ application.id }}/contact-details" class="btn btn-sm btn-teal py-1.5 px-3">
+                                                Submit Contact Details
+                                            </a>
+                                        {% endif %}
+                                    {% else %}
+                                        <span class="text-muted small">-</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="card border-0 p-5 text-center bg-glass mb-5">
+                <div class="card-body py-5">
+                    <i class="bi bi-check-circle text-muted display-3 mb-3"></i>
+                    <h4 class="text-light">No applications submitted yet</h4>
+                    <p class="text-secondary small mb-4">Screen your resume using our ATS analyzer and start applying for openings.</p>
+                    <a href="/jobs" class="btn btn-teal px-4 py-2.5 rounded-3">
+                        Browse Available Jobs
+                    </a>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

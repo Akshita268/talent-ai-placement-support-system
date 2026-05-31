@@ -1,0 +1,123 @@
+{% extends "dashboard_student.html" %}
+
+{% block body %}
+<div class="row justify-content-center">
+    <div class="col-lg-11">
+        <!-- Breadcrumb / Header -->
+        <div class="card border-0 shadow-sm p-4 bg-glass mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                    <div>
+                        <h6 class="text-secondary text-uppercase small tracking-wider mb-1">
+                            <a href="/coding-prep" class="text-secondary text-decoration-none">Prep Hub</a> 
+                            <span class="mx-1">/</span> 
+                            <a href="/coding-prep/category/{{ category_name }}" class="text-secondary text-decoration-none">{{ category.title }}</a> 
+                            <span class="mx-1">/</span> 
+                            <span class="text-light">{{ topic_name }}</span>
+                        </h6>
+                        <h1 class="h2 fw-extrabold text-light mb-1">{{ topic_name }}</h1>
+                        <p class="text-secondary mb-0">AI-Generated Placement Study Guide</p>
+                    </div>
+                    <a href="/coding-prep/category/{{ category_name }}" class="btn btn-outline-secondary text-light border-secondary">
+                        <i class="bi bi-arrow-left me-1"></i> Back to {{ category_name }}
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <!-- Left Side: Explanation, FAQs, Model Answers -->
+            <div class="col-lg-7">
+                <!-- Topic Explanation -->
+                <div class="card border-0 shadow-sm p-4 bg-glass mb-4">
+                    <div class="card-body">
+                        <h3 class="h5 text-light mb-3"><i class="bi bi-file-earmark-text text-indigo me-2"></i> Topic Explanation</h3>
+                        <p class="text-secondary mb-0" style="line-height: 1.7; font-size: 0.95rem; white-space: pre-wrap;">{{ content.explanation }}</p>
+                    </div>
+                </div>
+
+                <!-- Model Answers / Implementation -->
+                {% if content.model_answer %}
+                <div class="card border-0 shadow-sm p-4 bg-glass mb-4">
+                    <div class="card-body">
+                        <h3 class="h5 text-light mb-2"><i class="bi bi-code-square text-teal me-2"></i> Model Answer & Solution</h3>
+                        <h6 class="text-secondary small fw-bold mb-3">{{ content.model_answer.title }}</h6>
+                        
+                        <div class="d-flex justify-content-between align-items-center bg-dark border border-secondary border-opacity-10 px-3 py-2 rounded-top-3">
+                            <span class="badge bg-indigo-subtle text-indigo rounded-pill px-2.5 py-1 small">{{ content.model_answer.language }} Code</span>
+                            <span class="text-muted small" style="font-size: 0.75rem;"><i class="bi bi-lock-fill"></i> Read-only Reference</span>
+                        </div>
+                        <pre class="bg-dark border border-top-0 border-secondary border-opacity-10 text-light p-3 rounded-bottom-3 font-monospace small mb-0" style="overflow-x: auto; max-height: 500px; line-height: 1.5; white-space: pre;"><code>{{ content.model_answer.code }}</code></pre>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Frequently Asked Questions -->
+                <div class="card border-0 shadow-sm p-4 bg-glass mb-4">
+                    <div class="card-body">
+                        <h3 class="h5 text-light mb-4"><i class="bi bi-question-circle text-warning me-2"></i> Frequently Asked Questions</h3>
+                        <div class="d-flex flex-column gap-3">
+                            {% for faq in content.faqs %}
+                            <div class="p-3 bg-dark bg-opacity-40 rounded-3 border border-secondary border-opacity-10">
+                                <h5 class="h6 text-light fw-bold mb-2"><i class="bi bi-patch-question-fill text-indigo me-1.5"></i> {{ faq.q }}</h5>
+                                <p class="text-secondary small mb-0" style="line-height: 1.6;">{{ faq.a }}</p>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side: Metadata, Mistakes, Tips -->
+            <div class="col-lg-5">
+                <!-- Metadata Info Card -->
+                <div class="card border-0 shadow-sm p-4 bg-glass mb-4">
+                    <div class="card-body">
+                        <h3 class="h5 text-light mb-4"><i class="bi bi-info-circle text-accent me-2"></i> Interview Status</h3>
+                        
+                        <div class="mb-3">
+                            <span class="text-secondary small d-block mb-1">Difficulty Level</span>
+                            <span class="badge {% if 'Hard' in content.difficulty %}bg-danger-subtle text-danger-emphasis{% elif 'Easy' in content.difficulty %}bg-success-subtle text-success-emphasis{% else %}bg-warning-subtle text-warning-emphasis{% endif %} rounded-pill px-3 py-1.5 fs-6">{{ content.difficulty }}</span>
+                        </div>
+                        
+                        <div>
+                            <span class="text-secondary small d-block mb-1">Interview Importance</span>
+                            <p class="text-light fw-semibold mb-0" style="font-size: 0.95rem;">{{ content.importance }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Common Mistakes Alert Box -->
+                <div class="card border-0 shadow-sm p-4 bg-glass border-start border-4 border-danger mb-4">
+                    <div class="card-body">
+                        <h3 class="h5 text-danger mb-3"><i class="bi bi-exclamation-octagon-fill me-2"></i> Common Mistakes</h3>
+                        <ul class="list-group list-group-flush bg-transparent">
+                            {% for mistake in content.mistakes %}
+                            <li class="list-group-item bg-transparent text-secondary border-secondary border-opacity-10 px-0 py-2.5 small d-flex align-items-start gap-2">
+                                <i class="bi bi-x-circle-fill text-danger mt-0.5" style="min-width: 14px;"></i>
+                                <span>{{ mistake }}</span>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Interview Tips Lightbulb Box -->
+                <div class="card border-0 shadow-sm p-4 bg-glass border-start border-4 border-warning mb-4">
+                    <div class="card-body">
+                        <h3 class="h5 text-warning mb-3" style="color: var(--golden-batter) !important;"><i class="bi bi-lightbulb-fill me-2"></i> Pro Interview Tips</h3>
+                        <ul class="list-group list-group-flush bg-transparent">
+                            {% for tip in content.tips %}
+                            <li class="list-group-item bg-transparent text-secondary border-secondary border-opacity-10 px-0 py-2.5 small d-flex align-items-start gap-2">
+                                <i class="bi bi-check-circle-fill text-success mt-0.5" style="min-width: 14px; color: var(--golden-batter) !important;"></i>
+                                <span>{{ tip }}</span>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

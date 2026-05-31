@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block layout %}
+    <div class="app-wrapper">
+        <!-- Sidebar Navigation -->
+        <div class="sidebar">
+            <a href="/recruiter/dashboard" class="brand">
+                <i class="bi bi-briefcase-fill fs-4"></i> TalentAI Recruiter
+            </a>
+            <ul class="nav-menu">
+                <li>
+                    <a href="/recruiter/dashboard" class="nav-link-custom {% if request.path == '/recruiter/dashboard' %}active{% endif %}">
+                        <i class="bi bi-speedometer2"></i> Dashboard
+                    </a>
+                </li>
+                <li>
+                    <a href="/recruiter/create-job" class="nav-link-custom {% if request.path == '/recruiter/create-job' %}active{% endif %}">
+                        <i class="bi bi-plus-circle"></i> Post Job
+                    </a>
+                </li>
+                <li>
+                    <a href="/recruiter/jobs" class="nav-link-custom {% if request.path == '/recruiter/jobs' %}active/index/manage{% endif %}">
+                        <i class="bi bi-list-task"></i> Manage Jobs
+                    </a>
+                </li>
+                <li>
+                    <a href="/recruiter/jobs" class="nav-link-custom">
+                        <i class="bi bi-people-fill"></i> Applicants
+                    </a>
+                </li>
+                <li>
+                    <a href="/recruiter/dashboard#funnelChart" class="nav-link-custom">
+                        <i class="bi bi-bar-chart-line-fill"></i> Analytics
+                    </a>
+                </li>
+                <li>
+                    <a href="/recruiter/profile" class="nav-link-custom {% if request.path == '/recruiter/profile' %}active{% endif %}">
+                        <i class="bi bi-building"></i> Profile
+                    </a>
+                </li>
+                <li class="mt-auto">
+                    <a href="/recruiter/logout" class="nav-link-custom text-danger">
+                        <i class="bi bi-box-arrow-left"></i> Logout
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="main-content">
+            <div class="fade-in">
+                {% block body %}
+                {% endblock %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

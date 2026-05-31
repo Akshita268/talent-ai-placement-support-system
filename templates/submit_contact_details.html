@@ -1,0 +1,80 @@
+{% extends "dashboard_student.html" %}
+
+{% block body %}
+<div class="row justify-content-center">
+    <div class="col-lg-8 col-md-10">
+        <!-- Header Card -->
+        <div class="card border-0 shadow-sm p-4 bg-glass mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                    <div>
+                        <h1 class="h3 fw-bold text-light mb-1">Submit Contact Details</h1>
+                        <p class="text-secondary mb-0">Provide your contact info for <strong>{% if application.job %}{{ application.job.job_role }}{% else %}Deleted Job{% endif %}</strong> at <strong>{% if application.job %}{{ application.job.company_name }}{% else %}N/A{% endif %}</strong></p>
+                    </div>
+                    <a href="/my_applications" class="btn btn-outline-secondary text-light border-secondary px-3 py-2 rounded-3">
+                        <i class="bi bi-arrow-left"></i> My Applications
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Form Card -->
+        <div class="card border-0 shadow-sm p-4 bg-glass">
+            <div class="card-body">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label class="form-label text-muted small fw-medium">Phone Number</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-dark border-secondary text-secondary"><i class="bi bi-telephone"></i></span>
+                            <input type="tel" name="phone" class="form-control text-light" placeholder="e.g. +1 (555) 019-2834" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label text-muted small fw-medium">LinkedIn Profile URL</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-dark border-secondary text-secondary"><i class="bi bi-linkedin"></i></span>
+                            <input type="text" name="linkedin" class="form-control text-light" placeholder="e.g. linkedin.com/in/username" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label text-muted small fw-medium">Current Location</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-dark border-secondary text-secondary"><i class="bi bi-geo-alt"></i></span>
+                            <input type="text" name="location" class="form-control text-light" placeholder="e.g. San Francisco, CA" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label text-muted small fw-medium">Preferred Contact Time</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-dark border-secondary text-secondary"><i class="bi bi-clock"></i></span>
+                            <input type="text" name="contact_time" class="form-control text-light" placeholder="e.g. Weekdays 9 AM - 12 PM PST" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label text-muted small fw-medium">Additional Notes (Optional)</label>
+                        <textarea name="notes" class="form-control text-light" rows="4" placeholder="Mention any details about availability or specific requirements..."></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-teal w-100 py-2.5 rounded-3">
+                        Submit Contact Details <i class="bi bi-send-check ms-1"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.querySelector('form').addEventListener('submit', function(e) {
+    const linkedinInput = document.querySelector('input[name="linkedin"]');
+    let val = linkedinInput.value.trim();
+    if (val && !val.match(/^https?:\/\//i)) {
+        linkedinInput.value = 'https://' + val;
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends 'public_base.html' %}
+
+{% block body %}
+<div class="row justify-content-center align-items-center" style="min-height: 60vh;">
+    <div class="col-md-5 col-sm-8 col-11 text-center">
+        <div class="card bg-glass border-0 p-5 shadow">
+            <div class="card-body">
+                <i class="bi bi-building-fill fs-1 text-gradient mb-3 d-block"></i>
+                <h2 class="h3 text-light mb-2" style="font-family: 'Playfair Display', serif;">Recruiter Portal</h2>
+                <p class="text-secondary small mb-4">Manage job openings and evaluate applicant pipelines.</p>
+                <div class="d-flex flex-column gap-3">
+                    <a href="/recruiter/login" class="btn btn-indigo py-2.5 rounded-3">
+                        Sign In
+                    </a>
+                    <a href="/recruiter/register" class="btn btn-outline-secondary text-light py-2.5 rounded-3 border-secondary">
+                        Register Company Account
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

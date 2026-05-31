@@ -1,0 +1,50 @@
+{% extends "dashboard_student.html" %}
+
+{% block body %}
+<div class="row justify-content-center">
+    <div class="col-lg-8 col-md-10">
+        <!-- Feedback Card -->
+        <div class="card border-0 shadow-sm p-4 bg-glass mb-4">
+            <div class="card-body text-center">
+                <!-- Attempt Status Indicator Icon -->
+                {% if score >= 80 %}
+                    <div class="d-inline-flex align-items-center justify-content-center bg-success-subtle text-success rounded-circle p-3 mb-3 shadow" style="width: 70px; height: 70px;">
+                        <i class="bi bi-patch-check-fill fs-2"></i>
+                    </div>
+                    <h2 class="h4 text-light mb-1">Excellent Answer</h2>
+                {% elif score >= 60 %}
+                    <div class="d-inline-flex align-items-center justify-content-center bg-warning-subtle text-warning rounded-circle p-3 mb-3 shadow" style="width: 70px; height: 70px;">
+                        <i class="bi bi-hand-thumbs-up-fill fs-2"></i>
+                    </div>
+                    <h2 class="h4 text-light mb-1">Good Attempt</h2>
+                {% else %}
+                    <div class="d-inline-flex align-items-center justify-content-center bg-danger-subtle text-danger rounded-circle p-3 mb-3 shadow" style="width: 70px; height: 70px;">
+                        <i class="bi bi-exclamation-triangle-fill fs-2"></i>
+                    </div>
+                    <h2 class="h4 text-light mb-1">Needs Improvement</h2>
+                {% endif %}
+                <p class="text-secondary small mb-4">Your response was processed and graded by AI evaluations</p>
+
+                <!-- Score Card -->
+                <div class="p-3 bg-dark rounded-3 border border-secondary border-opacity-10 mb-4 d-inline-block px-5">
+                    <span class="text-secondary small d-block mb-1">Answer Evaluation Score</span>
+                    <span class="display-6 fw-extrabold text-gradient">{{ score }} / 100</span>
+                </div>
+
+                <!-- Analysis Details -->
+                <div class="text-start mb-4">
+                    <h5 class="h6 text-indigo mb-2"><i class="bi bi-clipboard-pulse"></i> Detailed Critique</h5>
+                    <p class="text-secondary small p-3 bg-dark border border-secondary border-opacity-10 rounded-3 mb-0" style="line-height: 1.6;">
+                        {{ feedback }}
+                    </p>
+                </div>
+
+                <!-- Action Button -->
+                <a href="/question" class="btn btn-indigo w-100 py-2.5 rounded-3 fw-bold">
+                    Proceed to Next Question <i class="bi bi-chevron-right ms-1"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

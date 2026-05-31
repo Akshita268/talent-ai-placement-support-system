@@ -1,0 +1,117 @@
+{% extends "dashboard_student.html" %}
+
+{% block body %}
+<div class="row justify-content-center">
+    <div class="col-lg-11">
+        <!-- Breadcrumbs / Header -->
+        <div class="card border-0 shadow-sm p-4 bg-glass mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                    <div>
+                        <h6 class="text-secondary text-uppercase small tracking-wider mb-1">
+                            <a href="/coding-prep" class="text-secondary text-decoration-none">Prep Hub</a> 
+                            <span class="mx-1">/</span> 
+                            <a href="/coding-prep/category/{{ category_name }}" class="text-secondary text-decoration-none">{{ category.title }}</a> 
+                            <span class="mx-1">/</span> 
+                            <a href="/coding-prep/subcategory/{{ category_name }}/{{ subcategory_name }}" class="text-secondary text-decoration-none">{{ subcategory_name }}</a>
+                        </h6>
+                        <h1 class="h3 fw-extrabold text-light mb-1">Question {{ question.id }}</h1>
+                    </div>
+                    <a href="/coding-prep/subcategory/{{ category_name }}/{{ subcategory_name }}" class="btn btn-outline-secondary text-light border-secondary">
+                        <i class="bi bi-list-ol me-1"></i> Question List
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Question Details -->
+        <div class="card border-0 shadow-sm p-4 bg-glass mb-4">
+            <div class="card-body">
+                <!-- Meta Info Row -->
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 border-bottom pb-3 border-secondary border-opacity-10 mb-4">
+                    <div class="d-flex gap-2 align-items-center">
+                        <span class="badge {% if question.difficulty == 'Hard' %}bg-danger-subtle text-danger-emphasis{% elif question.difficulty == 'Easy' %}bg-success-subtle text-success-emphasis{% else %}bg-warning-subtle text-warning-emphasis{% endif %} rounded-pill px-3 py-1.5 fs-6">
+                            {{ question.difficulty }}
+                        </span>
+                        {% if completed %}
+                            <span class="badge bg-success-subtle text-success-emphasis rounded-pill px-3 py-1.5 fs-6">
+                                <i class="bi bi-check-circle-fill me-1"></i> Completed
+                            </span>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Toggle Completion Button -->
+                    <form action="/coding-prep/toggle-completion/{{ category_name }}/{{ subcategory_name }}/{{ question.id }}" method="POST" class="m-0">
+                        {% if completed %}
+                            <button type="submit" class="btn btn-sm btn-outline-danger px-3 py-2 rounded-3 text-light border-danger">
+                                <i class="bi bi-x-circle me-1"></i> Mark As Incomplete
+                            </button>
+                        {% else %}
+                            <button type="submit" class="btn btn-sm btn-success px-3 py-2 rounded-3">
+                                <i class="bi bi-check-circle-fill me-1"></i> Mark As Completed
+                            </button>
+                        {% endif %}
+                    </form>
+                </div>
+
+                <!-- Question Title -->
+                <div class="mb-4">
+                    <h5 class="h6 text-indigo mb-2"><i class="bi bi-question-circle"></i> Interview Question</h5>
+                    <div class="p-3 bg-dark border border-secondary border-opacity-10 rounded-3 text-light fw-bold" style="font-size: 1.1rem; line-height: 1.5; font-family: 'Poppins', sans-serif;">
+                        {{ question.question }}
+                    </div>
+                </div>
+
+                <!-- Answer Summary -->
+                <div class="mb-4">
+                    <h5 class="h6 text-teal mb-2"><i class="bi bi-card-text text-teal me-1"></i> Key Answer</h5>
+                    <div class="p-3 bg-dark border border-secondary border-opacity-10 rounded-3 text-light" style="line-height: 1.6; white-space: pre-wrap;">{{ question.answer }}</div>
+                </div>
+
+                <!-- Explanation Section -->
+                <div class="mb-4">
+                    <h5 class="h6 text-indigo mb-2"><i class="bi bi-file-earmark-text text-indigo me-1"></i> Technical Explanation</h5>
+                    <div class="p-3 bg-dark border border-secondary border-opacity-10 rounded-3 text-secondary small" style="line-height: 1.7; white-space: pre-wrap; font-size: 0.9rem;">{{ question.explanation }}</div>
+                </div>
+
+                <!-- Interview Tip (if exists) -->
+                {% if question.interview_tip %}
+                <div class="mb-0 p-4 rounded-3 border-start border-4 border-warning bg-dark bg-opacity-40">
+                    <h5 class="h6 text-warning mb-2" style="color: var(--golden-batter) !important;"><i class="bi bi-lightbulb-fill me-1"></i> Pro Interview Tip</h5>
+                    <p class="text-secondary small mb-0" style="line-height: 1.6;">{{ question.interview_tip }}</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Pagination Controls -->
+        <div class="d-flex justify-content-between align-items-center mb-5 gap-3">
+            <div>
+                {% if prev_id %}
+                    <a href="/coding-prep/question/{{ category_name }}/{{ subcategory_name }}/{{ prev_id }}" class="btn btn-outline-secondary px-3 py-2 rounded-3 text-light border-secondary">
+                        <i class="bi bi-chevron-left me-1"></i> Previous Question
+                    </a>
+                {% else %}
+                    <button class="btn btn-outline-secondary px-3 py-2 rounded-3 text-light border-secondary opacity-50" disabled>
+                        <i class="bi bi-chevron-left me-1"></i> Previous Question
+                    </button>
+                {% endif %}
+            </div>
+            
+            <span class="text-secondary small">Question {{ question.id }} of 15</span>
+            
+            <div>
+                {% if next_id %}
+                    <a href="/coding-prep/question/{{ category_name }}/{{ subcategory_name }}/{{ next_id }}" class="btn btn-outline-secondary px-3 py-2 rounded-3 text-light border-secondary">
+                        Next Question <i class="bi bi-chevron-right ms-1"></i>
+                    </a>
+                {% else %}
+                    <button class="btn btn-outline-secondary px-3 py-2 rounded-3 text-light border-secondary opacity-50" disabled>
+                        Next Question <i class="bi bi-chevron-right ms-1"></i>
+                    </button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

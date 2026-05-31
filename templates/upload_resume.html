@@ -1,0 +1,152 @@
+{% extends "dashboard_student.html" %}
+
+{% block body %}
+<div class="row justify-content-center">
+    <div class="col-lg-8 col-md-10">
+        <!-- Header / Details Card -->
+        <div class="card border-0 shadow-sm p-4 bg-glass mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                    <div>
+                        <h6 class="text-secondary text-uppercase small tracking-wider mb-1"><i class="bi bi-cpu text-accent me-1"></i> TalentAI Screener</h6>
+                        <h1 class="h3 fw-bold text-light mb-1">Upload Resume</h1>
+                        <p class="text-secondary mb-0">Applying for <strong>{{ job.job_role }}</strong> at <strong>{{ job.company_name }}</strong></p>
+                    </div>
+                    <a href="/job/{{ job.id }}" class="btn btn-outline-secondary text-light border-secondary px-3 py-2 rounded-3">
+                        <i class="bi bi-arrow-left"></i> Job Details
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Drag & Drop Upload Card -->
+        <div class="card border-0 shadow-sm p-4 bg-glass mb-4">
+            <div class="card-body">
+                <h5 class="text-light mb-3">AI Resume ATS Pre-Screening</h5>
+                <p class="text-secondary small mb-4">Before finalizing your application, our SentenceTransformer algorithm compares your resume semantic clusters against the job description keyword patterns. This optimizes your alignment rate.</p>
+
+                <form method="POST" enctype="multipart/form-data" id="uploadForm">
+                    <!-- Drag & Drop Zone -->
+                    <div id="dropZone" class="p-5 text-center border border-2 border-dashed rounded-3 mb-4 d-flex flex-column align-items-center justify-content-center cursor-pointer" 
+                         style="border-color: rgba(232, 209, 167, 0.3) !important; background-color: rgba(44, 28, 17, 0.4); transition: all 0.3s ease; min-height: 220px;">
+                        <i class="bi bi-cloud-arrow-up display-3 text-gradient mb-3"></i>
+                        <h5 class="h6 text-light mb-2">Drag and drop your resume here</h5>
+                        <p class="text-secondary small mb-3">Only PDF format accepted (Max 5MB)</p>
+                        
+                        <div class="btn btn-outline-secondary btn-sm text-light border-secondary px-4 py-2">
+                            Browse Files
+                        </div>
+                        <input type="file" name="resume" id="fileInput" class="d-none" accept=".pdf" required>
+                    </div>
+
+                    <!-- File Preview Card -->
+                    <div id="filePreview" class="p-3 bg-dark border border-secondary border-opacity-15 rounded-3 mb-4 d-none justify-content-between align-items-center">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-filetype-pdf text-danger fs-3 me-3"></i>
+                            <div>
+                                <span class="text-light small fw-bold d-block" id="fileName">resume.pdf</span>
+                                <span class="text-muted" style="font-size: 0.75rem;" id="fileSize">0 KB</span>
+                            </div>
+                        </div>
+                        <button type="button" id="removeFileBtn" class="btn btn-sm btn-outline-danger border-0">
+                            <i class="bi bi-x-circle fs-5"></i>
+                        </button>
+                    </div>
+
+                    <button type="submit" class="btn btn-teal w-100 py-2.5 rounded-3 fw-bold" id="submitBtn">
+                        Analyze Resume Compatibility <i class="bi bi-cpu-fill ms-1"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.cursor-pointer {
+    cursor: pointer;
+}
+#dropZone.dragover {
+    background-color: rgba(132, 89, 43, 0.15) !important;
+    border-color: var(--golden-batter) !important;
+    transform: scale(0.99);
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    const filePreview = document.getElementById('filePreview');
+    const fileName = document.getElementById('fileName');
+    const fileSize = document.getElementById('fileSize');
+    const removeFileBtn = document.getElementById('removeFileBtn');
+    const submitBtn = document.getElementById('submitBtn');
+
+    // Trigger click on input when clicking zone
+    dropZone.addEventListener('click', () => fileInput.click());
+
+    // Drag-and-drop event handlers
+    ['dragenter', 'dragover'].forEach(eventName => {
+        dropZone.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            dropZone.classList.add('dragover');
+        }, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            dropZone.classList.remove('dragover');
+        }, false);
+    });
+
+    // Handle dropped files
+    dropZone.addEventListener('drop', (e) => {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        if(files.length > 0 && files[0].name.toLowerCase().endsWith('.pdf')) {
+            fileInput.files = files;
+            displayPreview(files[0]);
+        } else {
+            Swal.fire({
+                title: 'Invalid File',
+                text: 'Please drop a valid PDF document.',
+                icon: 'warning',
+                confirmButtonColor: '#743014',
+                background: '#2C1C11',
+                color: '#E8D1A7'
+            });
+        }
+    });
+
+    // Handle chosen file
+    fileInput.addEventListener('change', () => {
+        if(fileInput.files.length > 0) {
+            displayPreview(fileInput.files[0]);
+        }
+    });
+
+    // Display Preview
+    function displayPreview(file) {
+        fileName.textContent = file.name;
+        const sizeInKB = (file.size / 1024).toFixed(1);
+        fileSize.textContent = `${sizeInKB} KB`;
+        dropZone.classList.add('d-none');
+        filePreview.classList.remove('d-none');
+        filePreview.classList.add('d-flex');
+    }
+
+    // Remove chosen file
+    removeFileBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        fileInput.value = '';
+        filePreview.classList.add('d-none');
+        filePreview.classList.remove('d-flex');
+        dropZone.classList.remove('d-none');
+    });
+});
+</script>
+{% endblock %}
